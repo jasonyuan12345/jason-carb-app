@@ -1,7 +1,11 @@
+import 'package:camera/camera.dart';
 import 'package:carb_app/homescreen.dart';
 import 'package:flutter/material.dart';
 
-void main() {
+List<CameraDescription> cameras = [];
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  cameras = await availableCameras();
   runApp(const MyApp());
 }
 

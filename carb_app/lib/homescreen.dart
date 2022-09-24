@@ -1,3 +1,4 @@
+import 'package:carb_app/SecondScreen.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -28,7 +29,12 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Column(
                 children: [
                   Text(" Title "),
-                  ElevatedButton(onPressed: () {}, child: Text("Title"),)
+                  ElevatedButton(onPressed: () {
+                    var push = Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const SecondScreen()),
+                    );
+                  }, child: Text("Title"),)
                 ],
               )
             )

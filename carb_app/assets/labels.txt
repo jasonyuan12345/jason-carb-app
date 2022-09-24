@@ -1,0 +1,10 @@
+0 Banana
+1 Watermelon
+2 Peach
+3 Tomato
+4 Pineapple
+5 Rice
+6 Fries
+7 Hamburger
+8 Egg
+9 Noodle
