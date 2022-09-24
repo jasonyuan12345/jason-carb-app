@@ -1,3 +1,4 @@
+import 'package:carb_app/FoodDictionary.dart';
 import 'package:carb_app/SecondScreen.dart';
 import 'package:flutter/material.dart';
 
@@ -40,7 +41,15 @@ class _HomeScreenState extends State<HomeScreen> {
             )
           ],
         )
-      )
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          FoodData? fD = foodDictionary["Apple"];
+          print(fD?.name);
+          print(fD?.calories);
+        },
+        child: Icon(Icons.apple),
+      ),
     );
   }
 }
