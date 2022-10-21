@@ -1,6 +1,7 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:tflite_test/screens/home_page.dart';
+import 'package:tflite_test/screens/start.dart';
 
 List<CameraDescription> cameras;
 Future<void> main() async {
@@ -8,8 +9,6 @@ Future<void> main() async {
   cameras = await availableCameras();
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
-    home: MyHomePage(
-      cameras,
-    ),
+    home: StartScreen()
   ));
 }

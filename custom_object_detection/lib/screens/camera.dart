@@ -61,11 +61,17 @@ class _CameraState extends State<Camera> {
       return Container();
     }
 
-    return Transform.scale(
-      scale: 2 / cameraController.value.aspectRatio,
-      child: Center(
-        child: AspectRatio(
-          aspectRatio: cameraController.value.aspectRatio,
+    final size = MediaQuery.of(context).size;
+    final deviceRatio = size.width / size.height;
+    final xScale = cameraController.value.aspectRatio / 1;
+    final double yScale = 1;
+
+    return Container(
+      child: AspectRatio(
+        aspectRatio: deviceRatio,
+        child: Transform(
+          alignment: Alignment.center,
+          transform: Matrix4.diagonal3Values(xScale, yScale, 1),
           child: CameraPreview(cameraController),
         ),
       ),
