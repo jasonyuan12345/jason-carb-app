@@ -89,6 +89,71 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+  Future<void> recalculateFoodData(String date) async {
+    int calories;
+    double protein;
+    double sodium;
+    double carbs;
+    double fats;
+    double sugar;
+
+    final prefs = await SharedPreferences.getInstance();
+    List<String> foodsEaten_names = [];
+    foodsEaten_names = await prefs.getStringList(date);
+    for (var value in foodsEaten_names) {
+      FoodData fD = foodDictionary[value];
+      calories += fD.calories;
+      protein += fD.protein;
+      sodium += fD.sodium;
+      carbs += fD.carbs;
+      fats += fD.fats;
+      sugar += fD.sugar;
+    }
+
+    await prefs.setInt("calorieIntake", calories);
+    await prefs.setDouble("sodiumIntake", sodium);
+    await prefs.setDouble("carbsIntake", carbs);
+    await prefs.setDouble("fatsIntake", fats);
+    await prefs.setDouble("sugarIntake", sugar);
+    await prefs.setDouble("proteinIntake", protein);
+  }
+
+  Future<void> evaluateFoodData(String date) async {
+    final prefs = await SharedPreferences.getInstance();
+    int calorieLimit;
+    double proteinLimit;
+    double sodiumLimit;
+    double carbsLimit;
+    double fatsLimit;
+    double sugarLimit;
+
+    calorieLimit =  prefs.getInt("calorieLimit");
+    proteinLimit =  prefs.getDouble("proteinLimit");
+    sodiumLimit =  prefs.getDouble("sodiumLimit");
+    carbsLimit =  prefs.getDouble("carbsLimit");
+    fatsLimit =  prefs.getDouble("fatsLimit");
+    sugarLimit =  prefs.getDouble("sugarLimit");
+
+    int calories;
+    double protein;
+    double sodium;
+    double carbs;
+    double fats;
+    double sugar;
+
+    calories = prefs.getInt("calorieIntake");
+    protein = prefs.getDouble("proteinIntake");
+    sodium = prefs.getDouble("sodiumIntake");
+    carbs = prefs.getDouble("carbsIntake");
+    fats = prefs.getDouble("fatsIntake");
+    sugar = prefs.getDouble("sugarIntake");
+
+    if (calories > calorieLimit)
+      {
+
+      }
+  }
+
   Future<void> saveToFoodHistory(String name) async {
     final prefs = await SharedPreferences.getInstance();
     List<String> foodsEaten = [];
@@ -134,6 +199,8 @@ class _MyHomePageState extends State<MyHomePage> {
     catchError((error) {
       print(error.toString());
     });
+
+    await recalculateFoodData(today);
   }
 
   void showFoodInfo(String l, BuildContext context) {
@@ -181,34 +248,30 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.blueGrey,
-      body: Column(
+      body: Stack(
+        alignment: AlignmentDirectional.bottomCenter,
         children: [
-          Expanded(
-              flex: 80,
-              child: Camera(widget.cameras, setRecognitions)
-          ),
-          Expanded(
-            flex: 20,
-            child: ListView.builder(
-              padding: const EdgeInsets.all(8),
-              itemCount: output.length,
-              itemBuilder: (BuildContext context, int index) {
-                 return Container(
-                   height: 50,
-                   color: Colors.amber,
-                   child: Row(
-                     children: [
-                       Text(output[index]["label"]),
-                       IconButton(
-                           onPressed: () {
-                             showFoodInfo(output[index]["label"], context);
-                           },
-                           icon: Icon(Icons.remove_red_eye))
-                     ],
-                   ),
-                 );
-              }
-            ),
+          Camera(widget.cameras, setRecognitions),
+          ListView.builder(
+            shrinkWrap: true,
+            padding: const EdgeInsets.all(8),
+            itemCount: output.length,
+            itemBuilder: (BuildContext context, int index) {
+               return Container(
+                 height: 50,
+                 color: Colors.amber,
+                 child: Row(
+                   children: [
+                     Text(output[index]["label"]),
+                     IconButton(
+                         onPressed: () {
+                           showFoodInfo(output[index]["label"], context);
+                         },
+                         icon: Icon(Icons.remove_red_eye))
+                   ],
+                 ),
+               );
+            }
           )
 
         ],

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gradients/flutter_gradients.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tflite_test/screens/history.dart';
 import 'package:tflite_test/screens/home_page.dart';
 
@@ -15,9 +16,67 @@ class StartScreen extends StatefulWidget {
 
 class _StartScreenState extends State<StartScreen> {
 
+  TextEditingController limitController = TextEditingController();
+
+  Future<void> setLimit(String type, double value) async
+  {
+    final prefs = await SharedPreferences.getInstance();
+    if (type.compareTo("calorieLimit") == 0)
+      {
+        await prefs.setInt(type, value.floor()).
+        then((result){
+          print("Set value " + value.toString() + " for " + type);
+        });
+      }
+    else {
+      await prefs.setDouble(type, value).
+      then((result){
+        print("Set value " + value.toString() + " for " + type);
+      });
+    }
+  }
+
+  void showLimitEditor(String type, BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+              title: Text("Set your limit"),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(
+                    keyboardType: TextInputType.number,
+                    controller: limitController,
+                  )
+                ],
+              ),
+              actions: <Widget> [
+                ElevatedButton(
+                    onPressed: (){
+                      Navigator.of(context).pop();
+                    },
+                    child: Text("back")
+                ),
+                ElevatedButton(
+                    onPressed: () async {
+                      await setLimit(type.toLowerCase(), double.parse(limitController.text));
+                      Navigator.of(context).pop();
+                    },
+                    child: Icon(Icons.check)
+                )
+              ]
+          );
+        }
+    );
+  }
+
   Container createInfoWidget(IconData i, String name, int amount) {
     return Container(
-      color: Colors.white,
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(20)),
+          color: Colors.white,
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -39,6 +98,12 @@ class _StartScreenState extends State<StartScreen> {
               ),
               Text(
                   amount.toString()
+              ),
+              IconButton(
+                  onPressed: () {
+                    showLimitEditor(name + "Limit", context);
+                  },
+                  icon: Icon(Icons.search),
               )
             ],
           )
