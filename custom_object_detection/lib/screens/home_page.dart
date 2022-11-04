@@ -60,6 +60,32 @@ class _MyHomePageState extends State<MyHomePage> {
         return foodDictionary["Egg"];
       case "9 Noodle":
         return foodDictionary["Noodle"];
+      case "10 Avocado":
+        return foodDictionary["10 Avocado"];
+      case "11 Bacon":
+        return foodDictionary["11 Bacon"];
+      case "12 Lamb":
+        return foodDictionary["12 Lamb"];
+      case "13 Steak":
+        return foodDictionary["13 Steak"];
+      case "14 Pork":
+        return foodDictionary["14 Pork"];
+      case "15 Cucumber":
+        return foodDictionary["15 Cucumber"];
+      case "16 Fried Chicken":
+        return foodDictionary["16 Fried Chicken"];
+      case "17 Hot Dog":
+        return foodDictionary["17 Hot Dog"];
+      case "18 Cookies":
+        return foodDictionary["18 Cookies"];
+      case "19 Fried Rice":
+        return foodDictionary["19 Fried Rice"];
+      case "20 Pizza":
+        return foodDictionary["20 Pizza"];
+      case "21 Waffles":
+        return foodDictionary["21 Waffles"];
+
+
     }
   }
 
@@ -91,16 +117,19 @@ class _MyHomePageState extends State<MyHomePage> {
 
     List<String> days = [];
     if (prefs.containsKey("days")) {
-      List<String> days = await prefs.getStringList("days");
-      days.add(today);
+      print("Grabbing days...");
+      days = await prefs.getStringList("days");
     }
     else {
-      days.add(today);
+      print("Creating new day list");
     }
 
+    days.add(today);
+    print(days);
     await prefs.setStringList("days", days).
     then((value) {
       print("Saved " + today + " to days");
+      print(days);
     }).
     catchError((error) {
       print(error.toString());
@@ -121,7 +150,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 Text("Calories: " + fD.calories.toString() + "C"),
                 Text("Protein: " + fD.protein.toString() + "g"),
                 Text("Fats: "+ fD.fats.toString() + "g"),
-                Text("Sodium: "+ fD.sodium.toString() + "g"),
+                Text("Sodium: "+ fD.sodium.toString() + "mg"),
                 Text("Carbs: "+ fD.carbs.toString() + "g"),
                 Text("Sugar: "+ fD.sugar.toString() + "g"),
 

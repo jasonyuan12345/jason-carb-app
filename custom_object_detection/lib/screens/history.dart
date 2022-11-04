@@ -10,19 +10,43 @@ class History extends StatefulWidget {
 }
 
 class _HistoryState extends State<History> {
-  HashMap<String, List<String>> entries;
+  HashMap<String, List<String>> entries = new HashMap<String, List<String>>();
+
+  _HistoryState()
+  {
+    getAllFoodsEaten();
+  }
 
   Future<void> getAllFoodsEaten() async {
     final prefs = await SharedPreferences.getInstance();
     List<String> days = await prefs.getStringList("days");
-    days.forEach((element) {
+    print("DAYS: " + days.toString());
+    if (days == null) return;
+    days.forEach((element) async {
+      print(element);
       //get the list associated with that day
       //should be guaranteed to have some entry on that day
+      List<String> foodsEatenOnDay = await prefs.getStringList(element);
 
       //add that list to your entries list
+      setState(() {
+        entries[element] = foodsEatenOnDay;
+      });
     });
   }
 
+  Column displayFoodsEaten(List<String> foods)
+  {
+    List<Text> foodsTexts = [];
+    foods.forEach((element) {
+      foodsTexts.add(Text(element));
+    });
+    
+    return Column(
+      children: foodsTexts
+    );
+  }
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,17 +55,26 @@ class _HistoryState extends State<History> {
       ),
       body: Column(
         children: [
-          ListView.separated(
-            padding: const EdgeInsets.all(8),
-            itemCount: entries.length,
-            itemBuilder: (BuildContext context, int index) {
-              return Container(
-                height: 50,
-                color: Colors.amber,
-                child: Center(child: Text('Entry ${entries[index]}')),
-              );
-            },
-            separatorBuilder: (BuildContext context, int index) => const Divider(),
+          if (entries == null)
+            Text("No history of foods.")
+          else
+          Expanded(
+            child: ListView.separated(
+              padding: const EdgeInsets.all(8),
+              itemCount: entries.length,
+              itemBuilder: (BuildContext context, int index) {
+                return Container(
+                  color: Colors.amber,
+                  child: Column(
+                    children: [
+                      Text(entries.keys.elementAt(index)),
+                      displayFoodsEaten(entries.values.elementAt(index))
+                    ],
+                  ),
+                );
+              },
+              separatorBuilder: (BuildContext context, int index) => const Divider(),
+            ),
           )
         ],
       ),
