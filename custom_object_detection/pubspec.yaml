@@ -33,6 +33,7 @@ dependencies:
   shared_preferences:
   flutter_gradients:
   iconsax:
+  table_calendar:
 
 dev_dependencies:
   flutter_test:

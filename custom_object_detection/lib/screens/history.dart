@@ -2,6 +2,7 @@ import 'dart:collection';
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:table_calendar/table_calendar.dart';
 class History extends StatefulWidget {
   const History({Key key}) : super(key: key);
 
@@ -11,10 +12,80 @@ class History extends StatefulWidget {
 
 class _HistoryState extends State<History> {
   HashMap<String, List<String>> entries = new HashMap<String, List<String>>();
+  List<Widget> selectedEntry = [];
+  CalendarFormat _calendarFormat = CalendarFormat.month;
+  DateTime _focusedDay = DateTime.now();
+  DateTime _selectedDay;
+  bool selectedDayWithFood = false;
 
   _HistoryState()
   {
-    getAllFoodsEaten();
+    getAllFoodsEaten().
+    then((value) {
+      _selectedDay = DateTime.now();
+      _focusedDay = DateTime.now();
+      setSelectedDay(DateTime.now());
+    });
+  }
+
+  String dateTimeToSimpleString(DateTime dT)
+  {
+    return dT.day.toString() + "/" + dT.month.toString() + "/" + dT.year.toString();
+  }
+
+  bool isDayInEntries(String day)
+  {
+    return entries.containsKey(day);
+  }
+
+  Widget foodWidget(String food)
+  {
+    return Text(food);
+  }
+
+  Widget warningWidget(String warning)
+  {
+    return Container(
+        color: Colors.red,
+        child: Text
+          (
+            warning,
+            style: TextStyle(
+              color: Colors.white
+            ),
+          )
+    );
+  }
+
+  void setSelectedDay(DateTime day) async
+  {
+    print(day);
+    String dayString = dateTimeToSimpleString(day);
+    if (entries[dayString] == null){
+      selectedDayWithFood = false;
+      selectedEntry.clear();
+      return;
+    };
+
+    final prefs = await SharedPreferences.getInstance();
+
+    List<String> foods = List.from(entries[dayString]);
+    selectedDayWithFood = isDayInEntries(dayString);
+
+    if (selectedDayWithFood) {
+      List<String> warnings = prefs.getStringList(dayString + " WARNINGS");
+      if (warnings != null && warnings.isNotEmpty) {
+        warnings.forEach((warning) {
+          selectedEntry.add(warningWidget(warning));
+        });
+      }
+    }
+
+    if (foods != null && foods.isNotEmpty) {
+      foods.forEach((food) {
+        selectedEntry.add(foodWidget(food));
+      });
+    }
   }
 
   Future<void> getAllFoodsEaten() async {
@@ -35,46 +106,65 @@ class _HistoryState extends State<History> {
     });
   }
 
-  Column displayFoodsEaten(List<String> foods)
-  {
-    List<Text> foodsTexts = [];
-    foods.forEach((element) {
-      foodsTexts.add(Text(element));
-    });
-    
-    return Column(
-      children: foodsTexts
-    );
-  }
-  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("History"),
+        title: Text('TableCalendar - Basics'),
       ),
       body: Column(
         children: [
-          if (entries == null)
-            Text("No history of foods.")
-          else
           Expanded(
-            child: ListView.separated(
+            flex: 50,
+            child: TableCalendar(
+              firstDay: DateTime.utc(2022, 11, 1),
+              lastDay: DateTime.utc(2030, 12, 30),
+              focusedDay: _focusedDay,
+              calendarFormat: _calendarFormat,
+              selectedDayPredicate: (day) {
+                // Use `selectedDayPredicate` to determine which day is currently selected.
+                // If this returns true, then `day` will be marked as selected.
+
+                // Using `isSameDay` is recommended to disregard
+                // the time-part of compared DateTime objects.
+                return isSameDay(_selectedDay, day);
+              },
+              onDaySelected: (selectedDay, focusedDay) {
+                if (!isSameDay(_selectedDay, selectedDay)) {
+                  // Call `setState()` when updating the selected day
+                  setState(() {
+                    _selectedDay = selectedDay;
+                    _focusedDay = focusedDay;
+
+                    setSelectedDay(selectedDay);
+                  });
+                }
+              },
+              onFormatChanged: (format) {
+                if (_calendarFormat != format) {
+                  // Call `setState()` when updating calendar format
+                  setState(() {
+                    _calendarFormat = format;
+                  });
+                }
+              },
+              onPageChanged: (focusedDay) {
+                // No need to call `setState()` here
+                _focusedDay = focusedDay;
+              },
+            ),
+          ),
+          Expanded(
+            flex: 50,
+            child: selectedDayWithFood?
+            ListView.separated(
               padding: const EdgeInsets.all(8),
-              itemCount: entries.length,
+              itemCount: selectedEntry.length,
               itemBuilder: (BuildContext context, int index) {
-                return Container(
-                  color: Colors.amber,
-                  child: Column(
-                    children: [
-                      Text(entries.keys.elementAt(index)),
-                      displayFoodsEaten(entries.values.elementAt(index))
-                    ],
-                  ),
-                );
+                return selectedEntry[index];
               },
               separatorBuilder: (BuildContext context, int index) => const Divider(),
-            ),
+            ) : Container()
           )
         ],
       ),

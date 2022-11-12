@@ -214,7 +214,7 @@ class _StartScreenState extends State<StartScreen> {
           Expanded(
             child: GridView.count(
               primary: false,
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.all(10),
               crossAxisSpacing: 17,
               mainAxisSpacing: 17,
               crossAxisCount: 3,
@@ -225,8 +225,6 @@ class _StartScreenState extends State<StartScreen> {
                 createInfoWidget(Icons.dangerous, "Fats", 97),
                 createInfoWidget(Icons.add, "Carbs", 275),
                 createInfoWidget(Icons.fastfood_sharp, "Calories", 2000),
-
-
               ],
             ),
           )

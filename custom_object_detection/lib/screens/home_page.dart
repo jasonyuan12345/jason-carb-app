@@ -33,9 +33,11 @@ class _MyHomePageState extends State<MyHomePage> {
   setRecognitions(outputs) {
     print(outputs);
 
-    setState(() {
-      output = outputs;
-    });
+    if (mounted) {
+      setState(() {
+        output = outputs;
+      });
+    }
   }
 
   FoodData getCorrespondingFoodInfo(String l) {
@@ -90,12 +92,12 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> recalculateFoodData(String date) async {
-    int calories;
-    double protein;
-    double sodium;
-    double carbs;
-    double fats;
-    double sugar;
+    int calories = 0;
+    double protein = 0;
+    double sodium = 0;
+    double carbs = 0;
+    double fats = 0;
+    double sugar = 0;
 
     final prefs = await SharedPreferences.getInstance();
     List<String> foodsEaten_names = [];
@@ -118,7 +120,7 @@ class _MyHomePageState extends State<MyHomePage> {
     await prefs.setDouble("proteinIntake", protein);
   }
 
-  Future<void> evaluateFoodData(String date) async {
+  Future<List<String>> evaluateFoodData(String date) async {
     final prefs = await SharedPreferences.getInstance();
     int calorieLimit;
     double proteinLimit;
@@ -133,6 +135,13 @@ class _MyHomePageState extends State<MyHomePage> {
     carbsLimit =  prefs.getDouble("carbsLimit");
     fatsLimit =  prefs.getDouble("fatsLimit");
     sugarLimit =  prefs.getDouble("sugarLimit");
+    
+    print(calorieLimit);
+    print(proteinLimit);
+    print(sodiumLimit);
+    print(carbsLimit);
+    print(fatsLimit);
+    print(sugarLimit);
 
     int calories;
     double protein;
@@ -148,13 +157,70 @@ class _MyHomePageState extends State<MyHomePage> {
     fats = prefs.getDouble("fatsIntake");
     sugar = prefs.getDouble("sugarIntake");
 
-    if (calories > calorieLimit)
-      {
+    print(calories);
+    print(protein);
+    print(sodium);
+    print(carbs);
+    print(fats);
+    print(sugar);
 
-      }
+    List<String> warnings = [];
+
+    if (calories > calorieLimit)
+      warnings.add("CALORIES");
+    if (protein > proteinLimit)
+      warnings.add("PROTEIN");
+    if (sodium > sodiumLimit)
+      warnings.add("SODIUM");
+    if (carbs > carbsLimit)
+      warnings.add("CARBS");
+    if (fats > fatsLimit)
+      warnings.add("FATS");
+    if (sugar > sugarLimit)
+      warnings.add("SUGAR");
+
+    return warnings;
   }
 
-  Future<void> saveToFoodHistory(String name) async {
+  Future<void> saveWarnings(List<String> warnings) async
+  {
+    String today = DateTime.now().day.toString() + "/" + DateTime.now().month.toString() + "/" + DateTime.now().year.toString();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList(today + " WARNINGS", warnings).
+    then((value) {
+      print("Set warnings for " + today);
+    });
+  }
+
+  void showWarnings(List<String> warnings, BuildContext context) {
+    List<Text> textWarnings = [];
+    warnings.forEach((element) {
+      textWarnings.add(Text(element));
+    });
+
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+              title: Text("Hold on!"),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: textWarnings
+              ),
+              actions: <Widget> [
+                ElevatedButton(
+                    onPressed: (){
+                      Navigator.of(context).pop();
+                    },
+                    child: Text("back")
+                ),
+              ]
+          );
+        }
+    );
+  }
+
+  Future<List<String>> saveToFoodHistory(String name) async {
     final prefs = await SharedPreferences.getInstance();
     List<String> foodsEaten = [];
     String today = DateTime.now().day.toString() + "/" + DateTime.now().month.toString() + "/" + DateTime.now().year.toString();
@@ -189,7 +255,7 @@ class _MyHomePageState extends State<MyHomePage> {
       print("Creating new day list");
     }
 
-    days.add(today);
+    if (!days.contains(today)) days.add(today);
     print(days);
     await prefs.setStringList("days", days).
     then((value) {
@@ -201,6 +267,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
 
     await recalculateFoodData(today);
+    return await evaluateFoodData(today);
   }
 
   void showFoodInfo(String l, BuildContext context) {
@@ -220,8 +287,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 Text("Sodium: "+ fD.sodium.toString() + "mg"),
                 Text("Carbs: "+ fD.carbs.toString() + "g"),
                 Text("Sugar: "+ fD.sugar.toString() + "g"),
-
-
               ],
             ),
             actions: <Widget> [
@@ -233,9 +298,12 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               ElevatedButton(
                   onPressed: () async {
-                    await saveToFoodHistory(fD.name);
-                    Navigator.of(context).pop();
-                  },
+                    List<String> warnings = await saveToFoodHistory(fD.name);
+                    if (warnings.isNotEmpty)
+                      await saveWarnings(warnings);
+                      Navigator.of(context).pop();
+                      showWarnings(warnings, context);
+                    },
                   child: Icon(Icons.check)
               )
             ]
@@ -273,7 +341,6 @@ class _MyHomePageState extends State<MyHomePage> {
                );
             }
           )
-
         ],
       ),
     );
