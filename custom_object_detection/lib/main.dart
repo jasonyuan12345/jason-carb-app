@@ -1,8 +1,10 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tflite_test/screens/home_page.dart';
+import 'package:tflite_test/screens/scanning.dart';
 import 'package:tflite_test/screens/start.dart';
+
+import 'helper.dart';
 
 List<CameraDescription> cameras;
 
@@ -21,24 +23,30 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   final prefs = await SharedPreferences.getInstance();
-
-  if (!prefs.containsKey("calorieLimit"))
-    await prefs.setInt("calorieLimit", 1);
-  if (!prefs.containsKey("proteinLimit"))
-    await prefs.setDouble("proteinLimit", 1);
-  if (!prefs.containsKey("sodiumLimit"))
-    await prefs.setDouble("sodiumLimit", 1);
-  if (!prefs.containsKey("carbsLimit"))
-    await prefs.setDouble("carbsLimit", 1);
-  if (!prefs.containsKey("fatsLimit"))
-    await prefs.setDouble("fatsLimit", 1);
-  if (!prefs.containsKey("sugarLimit"))
-    await prefs.setDouble("sugarLimit", 1);
-
+  await prefs.clear();
   cameras = await availableCameras();
+
+  await prefs.setDouble("calorieIntake", 0).then((value) {print("Saved intake for calories");});
+  await prefs.setDouble("calorieLimit", 1).then((value) {print("Saved limit for calories");});
+
+  await prefs.setDouble("proteinIntake", 0).then((value) {print("Saved intake for protein");});
+  await prefs.setDouble("proteinLimit", 2).then((value) {print("Saved limit for protein");});
+
+  await prefs.setDouble("sodiumIntake", 0).then((value) {print("Saved intake for sodium");});
+  await prefs.setDouble("sodiumLimit", 3).then((value) {print("Saved limit for sodium");});
+
+  await prefs.setDouble("carbsIntake", 0).then((value) {print("Saved intake for carbs");});
+  await prefs.setDouble("carbsLimit", 4).then((value) {print("Saved limit for carbs");});
+
+  await prefs.setDouble("fatsIntake", 0).then((value) {print("Saved intake for fats");});
+  await prefs.setDouble("fatsLimit", 5).then((value) {print("Saved limit for fats");});
+
+  await prefs.setDouble("sugarIntake", 0).then((value) {print("Saved intake for sugar");});
+  await prefs.setDouble("sugarLimit", 6).then((value) {print("Saved limit for sugar");});
+
   runApp(MaterialApp(
-    debugShowCheckedModeBanner: false,
-    home: StartScreen()
+      debugShowCheckedModeBanner: false,
+      home: StartScreen()
   ));
 }
 

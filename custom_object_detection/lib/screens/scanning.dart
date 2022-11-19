@@ -92,7 +92,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> recalculateFoodData(String date) async {
-    int calories = 0;
+    double calories = 0;
     double protein = 0;
     double sodium = 0;
     double carbs = 0;
@@ -112,7 +112,7 @@ class _MyHomePageState extends State<MyHomePage> {
       sugar += fD.sugar;
     }
 
-    await prefs.setInt("calorieIntake", calories);
+    await prefs.setDouble("calorieIntake", calories);
     await prefs.setDouble("sodiumIntake", sodium);
     await prefs.setDouble("carbsIntake", carbs);
     await prefs.setDouble("fatsIntake", fats);
@@ -122,14 +122,14 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<List<String>> evaluateFoodData(String date) async {
     final prefs = await SharedPreferences.getInstance();
-    int calorieLimit;
+    double calorieLimit;
     double proteinLimit;
     double sodiumLimit;
     double carbsLimit;
     double fatsLimit;
     double sugarLimit;
 
-    calorieLimit =  prefs.getInt("calorieLimit");
+    calorieLimit =  prefs.getDouble("calorieLimit");
     proteinLimit =  prefs.getDouble("proteinLimit");
     sodiumLimit =  prefs.getDouble("sodiumLimit");
     carbsLimit =  prefs.getDouble("carbsLimit");
@@ -143,14 +143,14 @@ class _MyHomePageState extends State<MyHomePage> {
     print(fatsLimit);
     print(sugarLimit);
 
-    int calories;
+    double calories;
     double protein;
     double sodium;
     double carbs;
     double fats;
     double sugar;
 
-    calories = prefs.getInt("calorieIntake");
+    calories = prefs.getDouble("calorieIntake");
     protein = prefs.getDouble("proteinIntake");
     sodium = prefs.getDouble("sodiumIntake");
     carbs = prefs.getDouble("carbsIntake");
@@ -193,20 +193,36 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void showWarnings(List<String> warnings, BuildContext context) {
-    List<Text> textWarnings = [];
-    warnings.forEach((element) {
-      textWarnings.add(Text(element));
-    });
-
     showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
               title: Text("Hold on!"),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: textWarnings
+            content: SingleChildScrollView(
+              child: Container(
+                width: double.maxFinite,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Divider(),
+                    ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxHeight: MediaQuery.of(context).size.height * 0.4,
+                      ),
+                      child: ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: warnings.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            return Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(warnings[index])
+                            );
+                          }),
+                    ),
+                  ],
+                ),
               ),
+            ),
               actions: <Widget> [
                 ElevatedButton(
                     onPressed: (){

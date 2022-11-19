@@ -3,6 +3,7 @@ import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:tflite_test/screens/start.dart';
 class History extends StatefulWidget {
   const History({Key key}) : super(key: key);
 
@@ -20,12 +21,7 @@ class _HistoryState extends State<History> {
 
   _HistoryState()
   {
-    getAllFoodsEaten().
-    then((value) {
-      _selectedDay = DateTime.now();
-      _focusedDay = DateTime.now();
-      setSelectedDay(DateTime.now());
-    });
+    getAllFoodsEaten();
   }
 
   String dateTimeToSimpleString(DateTime dT)
@@ -59,13 +55,15 @@ class _HistoryState extends State<History> {
 
   void setSelectedDay(DateTime day) async
   {
-    print(day);
+    day = DateTime(day.year, day.month, day.day);
+    print("Selected: " + day.toString());
     String dayString = dateTimeToSimpleString(day);
+
     if (entries[dayString] == null){
       selectedDayWithFood = false;
       selectedEntry.clear();
       return;
-    };
+    }
 
     final prefs = await SharedPreferences.getInstance();
 
@@ -79,6 +77,9 @@ class _HistoryState extends State<History> {
           selectedEntry.add(warningWidget(warning));
         });
       }
+    }
+    else {
+      print(day.toString() + " has no foods");
     }
 
     if (foods != null && foods.isNotEmpty) {
@@ -108,65 +109,74 @@ class _HistoryState extends State<History> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('TableCalendar - Basics'),
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            flex: 50,
-            child: TableCalendar(
-              firstDay: DateTime.utc(2022, 11, 1),
-              lastDay: DateTime.utc(2030, 12, 30),
-              focusedDay: _focusedDay,
-              calendarFormat: _calendarFormat,
-              selectedDayPredicate: (day) {
-                // Use `selectedDayPredicate` to determine which day is currently selected.
-                // If this returns true, then `day` will be marked as selected.
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => StartScreen()),
+        );
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('TableCalendar - Basics'),
+          automaticallyImplyLeading: false,
+        ),
+        body: Column(
+          children: [
+            Expanded(
+              flex: 50,
+              child: TableCalendar(
+                firstDay: DateTime.utc(2022, 11, 1),
+                lastDay: DateTime.utc(2030, 12, 30),
+                focusedDay: _focusedDay,
+                calendarFormat: _calendarFormat,
+                selectedDayPredicate: (day) {
+                  // Use `selectedDayPredicate` to determine which day is currently selected.
+                  // If this returns true, then `day` will be marked as selected.
 
-                // Using `isSameDay` is recommended to disregard
-                // the time-part of compared DateTime objects.
-                return isSameDay(_selectedDay, day);
-              },
-              onDaySelected: (selectedDay, focusedDay) {
-                if (!isSameDay(_selectedDay, selectedDay)) {
-                  // Call `setState()` when updating the selected day
-                  setState(() {
-                    _selectedDay = selectedDay;
-                    _focusedDay = focusedDay;
+                  // Using `isSameDay` is recommended to disregard
+                  // the time-part of compared DateTime objects.
+                  return isSameDay(_selectedDay, day);
+                },
+                onDaySelected: (selectedDay, focusedDay) {
+                  if (!isSameDay(_selectedDay, selectedDay)) {
+                    // Call `setState()` when updating the selected day
+                    setState(() {
+                      _selectedDay = selectedDay;
+                      _focusedDay = focusedDay;
 
-                    setSelectedDay(selectedDay);
-                  });
-                }
-              },
-              onFormatChanged: (format) {
-                if (_calendarFormat != format) {
-                  // Call `setState()` when updating calendar format
-                  setState(() {
-                    _calendarFormat = format;
-                  });
-                }
-              },
-              onPageChanged: (focusedDay) {
-                // No need to call `setState()` here
-                _focusedDay = focusedDay;
-              },
+                      setSelectedDay(selectedDay);
+                    });
+                  }
+                },
+                onFormatChanged: (format) {
+                  if (_calendarFormat != format) {
+                    // Call `setState()` when updating calendar format
+                    setState(() {
+                      _calendarFormat = format;
+                    });
+                  }
+                },
+                onPageChanged: (focusedDay) {
+                  // No need to call `setState()` here
+                  _focusedDay = focusedDay;
+                },
+              ),
             ),
-          ),
-          Expanded(
-            flex: 50,
-            child: selectedDayWithFood?
-            ListView.separated(
-              padding: const EdgeInsets.all(8),
-              itemCount: selectedEntry.length,
-              itemBuilder: (BuildContext context, int index) {
-                return selectedEntry[index];
-              },
-              separatorBuilder: (BuildContext context, int index) => const Divider(),
-            ) : Container()
-          )
-        ],
+            Expanded(
+              flex: 50,
+              child: selectedDayWithFood?
+              ListView.separated(
+                padding: const EdgeInsets.all(8),
+                itemCount: selectedEntry.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return selectedEntry[index];
+                },
+                separatorBuilder: (BuildContext context, int index) => const Divider(),
+              ) : Container()
+            )
+          ],
+        ),
       ),
     );
   }

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gradients/flutter_gradients.dart';
-import 'package:iconsax/iconsax.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:step_progress_indicator/step_progress_indicator.dart';
+import 'package:tflite_test/helper.dart';
 import 'package:tflite_test/screens/history.dart';
-import 'package:tflite_test/screens/home_page.dart';
+import 'package:tflite_test/screens/scanning.dart';
 
 import '../main.dart';
 
@@ -17,23 +18,40 @@ class StartScreen extends StatefulWidget {
 class _StartScreenState extends State<StartScreen> {
 
   TextEditingController limitController = TextEditingController();
+  var limits = [];
+
+  _StartScreenState()
+  {
+    print("Visited start screen");
+    getLimits(LIMITS.keys.toList());
+  }
+
+  Future<void> getLimits(List<String> queries) async {
+    final prefs = await SharedPreferences.getInstance();
+    limits.clear();
+
+    for (String q in queries) {
+      double limit, at;
+      limit = prefs.getDouble(q + "Limit");
+      at = prefs.getDouble(q + "Intake");
+
+      if (limit == null)
+        limit = 40;
+      if (at == null)
+        at = 40;
+
+      setState(() {
+        limits.add(new DataLimit(limit, at, q));
+      });
+    }
+  }
 
   Future<void> setLimit(String type, double value) async
   {
     final prefs = await SharedPreferences.getInstance();
-    if (type.compareTo("calorieLimit") == 0)
-      {
-        await prefs.setInt(type, value.floor()).
-        then((result){
-          print("Set value " + value.toString() + " for " + type);
-        });
-      }
-    else {
-      await prefs.setDouble(type, value).
-      then((result){
-        print("Set value " + value.toString() + " for " + type);
-      });
-    }
+    await prefs.setDouble(type+"Limit", value);
+    print(type+"Limit" + " " + value.toString());
+    await getLimits(LIMITS.keys.toList());
   }
 
   void showLimitEditor(String type, BuildContext context) {
@@ -101,7 +119,7 @@ class _StartScreenState extends State<StartScreen> {
               ),
               IconButton(
                   onPressed: () {
-                    showLimitEditor(name + "Limit", context);
+                    showLimitEditor(name, context);
                   },
                   icon: Icon(Icons.search),
               )
@@ -112,106 +130,120 @@ class _StartScreenState extends State<StartScreen> {
     );
   }
 
+  Widget progressBar(DataLimit dL)
+  {
+    return Column(
+      children: [
+        Text(
+            dL.label+": " + dL.at.toString() + "/" + dL.limit.toString(),
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 20
+            ),
+        ),
+        StepProgressIndicator(
+          totalSteps: dL.limit.toInt(),
+          currentStep: dL.at.toInt(),
+          size: 8,
+          padding: 0,
+          selectedColor: Colors.yellow,
+          roundedEdges: Radius.circular(10),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
       body: Column(
         children: [
-          Container(
-              height: MediaQuery.of(context).size.height*0.20,
-              child: Center(
-                child: Text(
-                    "APP NAME",
-                    style: TextStyle(
-                      color: AppColors.textColor,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 30
-                    ),
-                ),
-              )
-          ),
-          Center(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(20)),
-                      gradient: FlutterGradients.grownEarly()
-                    ),
-                    width: MediaQuery.of(context).size.width,
-                    child: Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                      "Scanning",
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 35,
-                                        color: Colors.white,
-                                      ),
-                                  ),
-                                  Text(
-                                      "the best tool to keep track",
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                        color: Colors.white,
-                                      ),
-                                  ),
-                                ],
+          Expanded(
+            flex: 35,
+            child: Center(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 30, left: 8, right: 8, bottom: 8),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(20)),
+                        gradient: FlutterGradients.grownEarly()
+                      ),
+                      width: MediaQuery.of(context).size.width,
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                        "Scanning",
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 35,
+                                          color: Colors.white,
+                                        ),
+                                    ),
+                                    Text(
+                                        "the best tool to keep track",
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          color: Colors.white,
+                                        ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          mainAxisAlignment:MainAxisAlignment.end ,
-                          children: [
-                            IconButton(
-                              iconSize: 40,
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(builder: (context) => MyHomePage(cameras)),
-                                  );
-                                },
-                                icon: Icon(
-                                    Icons.arrow_circle_right,
-                                    color: Colors.white,
-                                )
-                            ),
-                          ],
-                        ),
-                      ],
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment:MainAxisAlignment.end ,
+                            children: [
+                              IconButton(
+                                iconSize: 40,
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => MyHomePage(cameras)),
+                                    );
+                                  },
+                                  icon: Icon(
+                                      Icons.arrow_circle_right,
+                                      color: Colors.white,
+                                  )
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: ElevatedButton(
-                      style: AppColors.buttonStyle,
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => History()),
-                        );
-                      },
-                      child: Text("History")
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ElevatedButton(
+                        style: AppColors.buttonStyle,
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => History()),
+                          );
+                        },
+                        child: Text("History")
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
           Expanded(
+            flex: 40,
             child: GridView.count(
               primary: false,
               padding: const EdgeInsets.all(10),
@@ -227,6 +259,16 @@ class _StartScreenState extends State<StartScreen> {
                 createInfoWidget(Icons.fastfood_sharp, "Calories", 2000),
               ],
             ),
+          ),
+          Expanded(
+            flex: 40,
+            child: ListView.builder(
+                padding: const EdgeInsets.all(8),
+                itemCount: limits.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return progressBar(limits[index]);
+                }
+            )
           )
         ],
       ),
