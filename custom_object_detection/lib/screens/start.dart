@@ -19,6 +19,7 @@ class _StartScreenState extends State<StartScreen> {
 
   TextEditingController limitController = TextEditingController();
   var limits = [];
+  var selectedValue;
 
   _StartScreenState()
   {
@@ -54,20 +55,58 @@ class _StartScreenState extends State<StartScreen> {
     await getLimits(LIMITS.keys.toList());
   }
 
-  void showLimitEditor(String type, BuildContext context) {
+  void showLimitEditor(BuildContext context) {
     showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
               title: Text("Set your limit"),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TextField(
-                    keyboardType: TextInputType.number,
-                    controller: limitController,
-                  )
-                ],
+              content: StatefulBuilder(
+                builder: (BuildContext context, StateSetter setState) {
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      DropdownButton(
+                          value: selectedValue,
+                          items: [
+                            DropdownMenuItem(
+                              child: Text("Calorie"),
+                              value: "calorie",
+                            ),
+                            DropdownMenuItem(
+                              child: Text("Carbs"),
+                              value: "carbs",
+                            ),
+                            DropdownMenuItem(
+                              child: Text("Fats"),
+                              value: "fats",
+                            ),
+                            DropdownMenuItem(
+                              child: Text("Sodium"),
+                              value: "sodium",
+                            ),
+                            DropdownMenuItem(
+                              child: Text("Sugar"),
+                              value: "sugar",
+                            ),
+                            DropdownMenuItem(
+                              child: Text("Protein"),
+                              value: "protein",
+                            ),
+                          ],
+                          onChanged: (value) {
+                            setState(() {
+                              selectedValue = value;
+                            });
+                          }
+                      ),
+                      TextField(
+                        keyboardType: TextInputType.number,
+                        controller: limitController,
+                      )
+                    ],
+                  );
+                }
               ),
               actions: <Widget> [
                 ElevatedButton(
@@ -78,7 +117,7 @@ class _StartScreenState extends State<StartScreen> {
                 ),
                 ElevatedButton(
                     onPressed: () async {
-                      await setLimit(type.toLowerCase(), double.parse(limitController.text));
+                      await setLimit(selectedValue.toString().toLowerCase(), double.parse(limitController.text));
                       Navigator.of(context).pop();
                     },
                     child: Icon(Icons.check)
@@ -95,38 +134,28 @@ class _StartScreenState extends State<StartScreen> {
           borderRadius: BorderRadius.all(Radius.circular(20)),
           color: Colors.white,
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Icon(
-                i,
-                size: 50,
-              )
-            ],
+          Icon(
+              i,
+              size: 40,
           ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Text(
-                  name
-              ),
-              Text(
-                  amount.toString()
-              ),
-              IconButton(
-                  onPressed: () {
-                    showLimitEditor(name, context);
-                  },
-                  icon: Icon(Icons.search),
-              )
-            ],
+          Padding(
+            padding: const EdgeInsets.only(top: 5),
+            child: Text(
+                name,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontStyle: FontStyle.italic,
+                ),
+            ),
+          ),
+          Text(
+            amount.toString()
           )
         ],
-      ),
+      )
     );
   }
 
@@ -134,19 +163,26 @@ class _StartScreenState extends State<StartScreen> {
   {
     return Column(
       children: [
-        Text(
-            dL.label+": " + dL.at.toString() + "/" + dL.limit.toString(),
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 20
-            ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+              dL.label+": " + dL.at.toString() + "/" + dL.limit.toString(),
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
+              ),
+          ),
         ),
         StepProgressIndicator(
           totalSteps: dL.limit.toInt(),
           currentStep: dL.at.toInt(),
           size: 8,
           padding: 0,
-          selectedColor: Colors.yellow,
+          selectedGradientColor: LinearGradient(
+            colors: [Colors.greenAccent, Colors.green,]
+          ),
+          unselectedColor: Colors.white,
           roundedEdges: Radius.circular(10),
         ),
       ],
@@ -227,15 +263,27 @@ class _StartScreenState extends State<StartScreen> {
                   ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: ElevatedButton(
-                        style: AppColors.buttonStyle,
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => History()),
-                          );
-                        },
-                        child: Text("History")
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        ElevatedButton(
+                            style: AppColors.buttonStyle,
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => History()),
+                              );
+                            },
+                            child: Text("History")
+                        ),
+                        ElevatedButton(
+                            style: AppColors.buttonStyle,
+                            onPressed: () {
+                              showLimitEditor(context);
+                            },
+                            child: Text("Change Limits")
+                        ),
+                      ],
                     ),
                   ),
                 ],

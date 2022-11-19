@@ -1,6 +1,7 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:step_progress_indicator/step_progress_indicator.dart';
 import 'package:tflite/tflite.dart';
 import 'package:tflite_test/screens/camera.dart';
 
@@ -167,7 +168,7 @@ class _MyHomePageState extends State<MyHomePage> {
     List<String> warnings = [];
 
     if (calories > calorieLimit)
-      warnings.add("CALORIES");
+      warnings.add("You've reached your calorie goal of " + calories.toString() + "/" + calorieLimit.toString());
     if (protein > proteinLimit)
       warnings.add("PROTEIN");
     if (sodium > sodiumLimit)
@@ -192,12 +193,21 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  void showWarnings(List<String> warnings, BuildContext context) {
+  void showLimitReached(List<String> goals, BuildContext context) {
+    List<Widget> goalWidgets = [];
+    for (String s in goals) {
+      goalWidgets.add(
+        Text(
+            s
+        )
+      );
+    }
+
     showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-              title: Text("Hold on!"),
+              title: Text("Good work!"),
             content: SingleChildScrollView(
               child: Container(
                 width: double.maxFinite,
@@ -209,16 +219,25 @@ class _MyHomePageState extends State<MyHomePage> {
                       constraints: BoxConstraints(
                         maxHeight: MediaQuery.of(context).size.height * 0.4,
                       ),
-                      child: ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: warnings.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            return Padding(
+                      child: Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: Text(warnings[index])
-                            );
-                          }),
+                              child: CircularStepProgressIndicator(
+                                totalSteps: 100,
+                                currentStep: 50,
+                                width: 150,
+                                height: 150,
+                                selectedColor: Colors.green,
+                                stepSize: 10,
+                                roundedCap: (_, __) => true,
+                                gradientColor: LinearGradient(
+                                  colors: [Colors.blue, Colors.green]
+                                ),
+                              )
+                            )
                     ),
+                    Column(
+                      children: goalWidgets,
+                    )
                   ],
                 ),
               ),
@@ -314,13 +333,13 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               ElevatedButton(
                   onPressed: () async {
-                    List<String> warnings = await saveToFoodHistory(fD.name);
-                    if (warnings.isNotEmpty)
-                      await saveWarnings(warnings);
+                    List<String> goals = await saveToFoodHistory(fD.name);
+                    if (goals.isNotEmpty)
+                      await saveWarnings(goals);
                       Navigator.of(context).pop();
-                      showWarnings(warnings, context);
+                      showLimitReached(goals, context);
                     },
-                  child: Icon(Icons.check)
+                  child: Text("add"),
               )
             ]
           );
