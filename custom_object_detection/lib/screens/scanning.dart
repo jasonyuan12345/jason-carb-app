@@ -168,17 +168,17 @@ class _MyHomePageState extends State<MyHomePage> {
     List<String> warnings = [];
 
     if (calories > calorieLimit)
-      warnings.add("You've reached your calorie goal of " + calories.toString() + "/" + calorieLimit.toString());
+      warnings.add("You have exceeded your calories limit by " + (calories-calorieLimit).toString());
     if (protein > proteinLimit)
-      warnings.add("PROTEIN");
+      warnings.add("You have exceeded your protein limit by " + (protein-proteinLimit).toString());
     if (sodium > sodiumLimit)
-      warnings.add("SODIUM");
+      warnings.add("You have exceeded your sodium limit by " + (sodium-sodiumLimit).toString());
     if (carbs > carbsLimit)
-      warnings.add("CARBS");
+      warnings.add("You have exceeded your carbs limit by " + (carbs-carbsLimit).toString());
     if (fats > fatsLimit)
-      warnings.add("FATS");
+      warnings.add("You have exceeded your fats limit by " + (fats-fatsLimit).toString());
     if (sugar > sugarLimit)
-      warnings.add("SUGAR");
+      warnings.add("You have exceeded your sugar limit by " + (sugar-sugarLimit).toString());
 
     return warnings;
   }

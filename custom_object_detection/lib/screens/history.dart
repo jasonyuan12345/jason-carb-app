@@ -41,15 +41,33 @@ class _HistoryState extends State<History> {
 
   Widget warningWidget(String warning)
   {
-    return Container(
-        color: Colors.red,
-        child: Text
-          (
-            warning,
-            style: TextStyle(
-              color: Colors.white
-            ),
-          )
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          height: 30,
+            decoration: BoxDecoration(
+                color: Colors.red,
+              borderRadius: BorderRadius.all(
+                Radius.circular(30)
+              )
+            ) ,
+
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: Center(
+                child: Text
+                  (
+                    warning,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold
+                    ),
+                  ),
+              ),
+            )
+        ),
+      ],
     );
   }
 
@@ -163,21 +181,22 @@ class _HistoryState extends State<History> {
                 },
               ),
             ),
-            Expanded(
-              flex: 50,
-              child: selectedDayWithFood?
-              ListView.separated(
-                padding: const EdgeInsets.all(8),
-                itemCount: selectedEntry.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return selectedEntry[index];
-                },
-                separatorBuilder: (BuildContext context, int index) => const Divider(),
-              ) : Container()
-            )
-          ],
-        ),
+          Expanded(
+            flex: 50,
+            child: selectedDayWithFood?
+            ListView.separated(
+              padding: const EdgeInsets.all(8),
+              itemCount: selectedEntry.length,
+              shrinkWrap: true,
+              itemBuilder: (BuildContext context, int index) {
+                return selectedEntry[index];
+              },
+              separatorBuilder: (BuildContext context, int index) => const Divider(),
+            ) : Container()
+          )
+        ],
       ),
+    )
     );
   }
 }

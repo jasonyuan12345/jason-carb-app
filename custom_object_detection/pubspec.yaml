@@ -35,6 +35,7 @@ dependencies:
   iconsax:
   table_calendar:
   step_progress_indicator:
+  circle_progress_bar:
 
 dev_dependencies:
   flutter_test:

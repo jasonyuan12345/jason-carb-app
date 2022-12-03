@@ -1,3 +1,4 @@
+import 'package:circle_progress_bar/circle_progress_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gradients/flutter_gradients.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -195,72 +196,36 @@ class _StartScreenState extends State<StartScreen> {
       backgroundColor: AppColors.backgroundColor,
       body: Column(
         children: [
-          Expanded(
-            flex: 35,
-            child: Center(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 30, left: 8, right: 8, bottom: 8),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(20)),
-                        gradient: FlutterGradients.grownEarly()
-                      ),
-                      width: MediaQuery.of(context).size.width,
-                      child: Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                        "Scanning",
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 35,
-                                          color: Colors.white,
-                                        ),
-                                    ),
-                                    Text(
-                                        "the best tool to keep track",
-                                        style: TextStyle(
-                                          fontSize: 20,
-                                          color: Colors.white,
-                                        ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                          Row(
-                            mainAxisAlignment:MainAxisAlignment.end ,
-                            children: [
-                              IconButton(
-                                iconSize: 40,
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(builder: (context) => MyHomePage(cameras)),
-                                    );
-                                  },
-                                  icon: Icon(
-                                      Icons.arrow_circle_right,
-                                      color: Colors.white,
-                                  )
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
+          CircleProgressBar(
+              foregroundColor: Colors.green,
+              value: 1.5
+          ),
+          Container(
+              height: MediaQuery.of(context).size.height*0.20,
+              child: Center(
+                child: Text(
+                    "APP NAME",
+                    style: TextStyle(
+                      color: AppColors.textColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 30
+                    ),
+                ),
+              )
+          ),
+          Center(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(20)),
+                      gradient: FlutterGradients.grownEarly()
                     ),
                   ),
+                ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Row(
@@ -289,7 +254,6 @@ class _StartScreenState extends State<StartScreen> {
                 ],
               ),
             ),
-          ),
           Expanded(
             flex: 40,
             child: GridView.count(
