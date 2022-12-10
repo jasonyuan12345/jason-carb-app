@@ -198,7 +198,11 @@ class _ScanningState extends State<Scanning> {
     for (String s in goals) {
       goalWidgets.add(
         Text(
-            s
+            "• " + s,
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.white
+            ),
         )
       );
     }
@@ -207,7 +211,11 @@ class _ScanningState extends State<Scanning> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-              title: Text("Good work!"),
+            backgroundColor: Colors.grey[800].withOpacity(0.7),
+              title: Text("Good work!",
+              style: TextStyle(
+                color: Colors.white
+              ),),
             content: SingleChildScrollView(
               child: Container(
                 width: double.maxFinite,
@@ -317,13 +325,13 @@ class _ScanningState extends State<Scanning> {
         context: context,
         builder: (BuildContext context) {
           return Container(
-            color: Colors.grey[700],
+            color: Colors.grey[800],
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height*0.6,
             child: Column(
               children: [
                 Padding(
-                  padding: const EdgeInsets.only( top:20, bottom: 10 ),
+                  padding: const EdgeInsets.only( top:25, bottom: 15 ),
                   child: Text(
                       fD.name,
                       style: TextStyle(
@@ -334,42 +342,42 @@ class _ScanningState extends State<Scanning> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only( top:6 ),
+                  padding: const EdgeInsets.only( top:10 ),
                   child: Text(
                       "Calories: " + fD.calories.toString() + "C",
                       style: tS,
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only( top:6 ),
+                  padding: const EdgeInsets.only( top:10 ),
                   child: Text(
                       "Protein: " + fD.protein.toString() + "g",
                       style: tS,
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only( top:6 ),
+                  padding: const EdgeInsets.only( top:10 ),
                   child: Text(
                       "Fats: "+ fD.fats.toString() + "g",
                     style: tS,
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only( top:6 ),
+                  padding: const EdgeInsets.only( top:10 ),
                   child: Text(
                       "Sodium: "+ fD.sodium.toString() + "mg",
                     style: tS,
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only( top:6 ),
+                  padding: const EdgeInsets.only( top:10 ),
                   child: Text(
                       "Carbs: "+ fD.carbs.toString() + "g",
                     style: tS,
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only( top:6 ),
+                  padding: const EdgeInsets.only( top:10 ),
                   child: Text(
                       "Sugar: "+ fD.sugar.toString() + "g",
                     style: tS,
@@ -379,7 +387,7 @@ class _ScanningState extends State<Scanning> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.all(12.0),
                       child: ElevatedButton(
                           onPressed: (){
                             Navigator.of(context).pop();
@@ -462,7 +470,7 @@ class _ScanningState extends State<Scanning> {
                  ),
                  child: Container(
                    decoration: BoxDecoration(
-                     color: Colors.grey[700].withOpacity(0.7),
+                     color: Colors.grey[800].withOpacity(0.7),
                      borderRadius: BorderRadius.all(Radius.circular(50))
                    ),
                    height: 50,

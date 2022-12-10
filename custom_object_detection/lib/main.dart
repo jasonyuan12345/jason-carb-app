@@ -10,7 +10,7 @@ List<CameraDescription> cameras;
 
 class AppColors{
   static Color appBarColor = Colors.white12;
-  static Color backgroundColor = Colors.white12;
+  static Color backgroundColor = Color(0xFF1F1F20);
   static Color textColor = Colors.white;
   static Color buttonColor = Colors.white30;
 
