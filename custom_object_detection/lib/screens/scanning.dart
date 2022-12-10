@@ -7,15 +7,15 @@ import 'package:tflite_test/screens/camera.dart';
 
 import '../food_dictionary.dart';
 
-class MyHomePage extends StatefulWidget {
+class Scanning extends StatefulWidget {
   final List<CameraDescription> cameras;
 
-  MyHomePage(this.cameras);
+  Scanning(this.cameras);
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _ScanningState createState() => _ScanningState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _ScanningState extends State<Scanning> {
   List<dynamic> output = [];
 
   @override

@@ -1,8 +1,11 @@
 import 'dart:collection';
+import 'dart:math';
 
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:tflite_test/food_dictionary.dart';
 import 'package:tflite_test/screens/start.dart';
 class History extends StatefulWidget {
   const History({Key key}) : super(key: key);
@@ -18,10 +21,28 @@ class _HistoryState extends State<History> {
   DateTime _focusedDay = DateTime.now();
   DateTime _selectedDay;
   bool selectedDayWithFood = false;
+  double calories, protein, fats, sodium, sugar, carbs;
+  double calorieLimit, proteinLimit, fatLimit, sodiumLimit, sugarLimit, carbsLimit;
+  bool exceedCalories = false, exceedProtein = false, exceedFats = false, exceedSodium = false, exceedSugar = false, exceedCarbs = false;
+  final ScrollController _scrollController = ScrollController();
 
   _HistoryState()
   {
+    getLimits();
     getAllFoodsEaten();
+  }
+
+  Future<void> getLimits()
+  async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      calorieLimit = prefs.getDouble("calorieLimit");
+      proteinLimit = prefs.getDouble("proteinLimit");
+      fatLimit = prefs.getDouble("fatsLimit");
+      sodiumLimit = prefs.getDouble("sodiumLimit");
+      sugarLimit = prefs.getDouble("sugarLimit");
+      carbsLimit = prefs.getDouble("carbsLimit");
+    });
   }
 
   String dateTimeToSimpleString(DateTime dT)
@@ -39,38 +60,6 @@ class _HistoryState extends State<History> {
     return Text(food);
   }
 
-  Widget warningWidget(String warning)
-  {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          height: 30,
-            decoration: BoxDecoration(
-                color: Colors.red,
-              borderRadius: BorderRadius.all(
-                Radius.circular(30)
-              )
-            ) ,
-
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: Center(
-                child: Text
-                  (
-                    warning,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold
-                    ),
-                  ),
-              ),
-            )
-        ),
-      ],
-    );
-  }
-
   void setSelectedDay(DateTime day) async
   {
     day = DateTime(day.year, day.month, day.day);
@@ -86,13 +75,38 @@ class _HistoryState extends State<History> {
     final prefs = await SharedPreferences.getInstance();
 
     List<String> foods = List.from(entries[dayString]);
+    print("FOODS: " + foods.toString());
+
+    calories = 0;
+    protein = 0;
+    fats = 0;
+    carbs = 0;
+    sugar = 0;
+    sodium = 0;
+    for (String s in foods)
+      {
+        FoodData f = foodDictionary[s];
+        setState(() {
+          calories+=f.calories;
+          protein+=f.protein;
+          fats+=f.fats;
+          carbs+=f.carbs;
+          sugar+=f.sugar;
+          sodium+=f.sodium;
+        });
+      }
+    print("$calories $protein $fats $carbs $sugar $sodium");
+
     selectedDayWithFood = isDayInEntries(dayString);
 
     if (selectedDayWithFood) {
       List<String> warnings = prefs.getStringList(dayString + " WARNINGS");
       if (warnings != null && warnings.isNotEmpty) {
         warnings.forEach((warning) {
-          selectedEntry.add(warningWidget(warning));
+          setState(() {
+            if (warning.contains("calories"))
+              exceedCalories = true;
+          });
         });
       }
     }
@@ -184,6 +198,18 @@ class _HistoryState extends State<History> {
           Expanded(
             flex: 50,
             child: selectedDayWithFood?
+            BarChart(
+              BarChartData(
+                barTouchData: barTouchData,
+                titlesData: titlesData,
+                borderData: borderData,
+                barGroups: barGroups,
+                gridData: FlGridData(show: false),
+                alignment: BarChartAlignment.spaceAround,
+                maxY: 20,
+              ),
+            )
+            /*
             ListView.separated(
               padding: const EdgeInsets.all(8),
               itemCount: selectedEntry.length,
@@ -192,11 +218,176 @@ class _HistoryState extends State<History> {
                 return selectedEntry[index];
               },
               separatorBuilder: (BuildContext context, int index) => const Divider(),
-            ) : Container()
+            ) */: Container()
           )
         ],
       ),
     )
     );
   }
+
+  BarTouchData get barTouchData => BarTouchData(
+    enabled: false,
+    touchTooltipData: BarTouchTooltipData(
+      tooltipBgColor: Colors.transparent,
+      tooltipPadding: EdgeInsets.zero,
+      tooltipMargin: 8,
+      getTooltipItem: (
+          BarChartGroupData group,
+          int groupIndex,
+          BarChartRodData rod,
+          int rodIndex,
+          ) {
+        return BarTooltipItem(
+          rod.toY.round().toString(),
+          const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        );
+      },
+    ),
+  );
+
+  Widget getTitles(double value, TitleMeta meta) {
+    const style = TextStyle(
+      color: Color(0xff7589a2),
+      fontWeight: FontWeight.bold,
+      fontSize: 14,
+    );
+    String text;
+    switch (value.toInt()) {
+      case 0:
+        text = 'Calories';
+        break;
+      case 1:
+        text = 'Carbs';
+        break;
+      case 2:
+        text = 'Sugar';
+        break;
+      case 3:
+        text = 'Protein';
+        break;
+      case 4:
+        text = 'Fats';
+        break;
+      case 5:
+        text = 'Sodium';
+        break;
+      default:
+        text = '';
+        break;
+    }
+    return SideTitleWidget(
+      axisSide: meta.axisSide,
+      space: 4,
+      child: Text(text, style: style),
+    );
+  }
+
+  FlTitlesData get titlesData => FlTitlesData(
+    show: true,
+    bottomTitles: AxisTitles(
+      sideTitles: SideTitles(
+        showTitles: true,
+        reservedSize: 30,
+        getTitlesWidget: getTitles,
+      ),
+    ),
+    leftTitles: AxisTitles(
+      sideTitles: SideTitles(showTitles: false),
+    ),
+    topTitles: AxisTitles(
+      sideTitles: SideTitles(showTitles: false),
+    ),
+    rightTitles: AxisTitles(
+      sideTitles: SideTitles(showTitles: false),
+    ),
+  );
+
+  FlBorderData get borderData => FlBorderData(
+    show: false,
+  );
+
+  LinearGradient get _barsGradient => const LinearGradient(
+    colors: [
+      Colors.lightBlueAccent,
+      Colors.greenAccent,
+    ],
+    begin: Alignment.bottomCenter,
+    end: Alignment.topCenter,
+  );
+
+  LinearGradient get _exceedGradient => const LinearGradient(
+    colors: [
+      Colors.red,
+      Colors.orange,
+    ],
+    begin: Alignment.bottomCenter,
+    end: Alignment.topCenter,
+  );
+
+  List<BarChartGroupData> get barGroups => [
+    BarChartGroupData(
+      x: 0,
+      barRods: [
+        BarChartRodData(
+          toY: min(calories/calorieLimit * 21, 21),
+          gradient: exceedCalories? _exceedGradient: _barsGradient,
+        )
+      ],
+      showingTooltipIndicators: [0],
+    ),
+    BarChartGroupData(
+      x: 1,
+      barRods: [
+        BarChartRodData(
+          toY: min(carbs/carbsLimit * 21, 21),
+          gradient: _barsGradient,
+        )
+      ],
+      showingTooltipIndicators: [0],
+    ),
+    BarChartGroupData(
+      x: 2,
+      barRods: [
+        BarChartRodData(
+          toY: min(sugar/sugarLimit * 21, 21),
+          gradient: _barsGradient,
+        )
+      ],
+      showingTooltipIndicators: [0],
+    ),
+    BarChartGroupData(
+      x: 3,
+      barRods: [
+        BarChartRodData(
+          toY: min(protein/proteinLimit * 21, 21),
+          gradient: _barsGradient,
+        )
+      ],
+      showingTooltipIndicators: [0],
+    ),
+    BarChartGroupData(
+      x: 4,
+      barRods: [
+        BarChartRodData(
+          toY: min(fats/fatLimit * 21, 21),
+          gradient: _barsGradient,
+        )
+      ],
+      showingTooltipIndicators: [0],
+    ),
+    BarChartGroupData(
+      x: 5,
+      barRods: [
+        BarChartRodData(
+          toY: min(sodium/sodiumLimit * 21, 21),
+          gradient: _barsGradient,
+        )
+      ],
+      showingTooltipIndicators: [0],
+    ),
+  ];
 }

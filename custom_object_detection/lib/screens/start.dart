@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:circle_progress_bar/circle_progress_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gradients/flutter_gradients.dart';
@@ -163,6 +165,7 @@ class _StartScreenState extends State<StartScreen> {
   Widget progressBar(DataLimit dL)
   {
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
         Padding(
           padding: const EdgeInsets.all(8.0),
@@ -177,7 +180,7 @@ class _StartScreenState extends State<StartScreen> {
         ),
         StepProgressIndicator(
           totalSteps: dL.limit.toInt(),
-          currentStep: dL.at.toInt(),
+          currentStep: min(dL.at.toInt(), dL.limit.toInt()),
           size: 8,
           padding: 0,
           selectedGradientColor: LinearGradient(
@@ -196,10 +199,6 @@ class _StartScreenState extends State<StartScreen> {
       backgroundColor: AppColors.backgroundColor,
       body: Column(
         children: [
-          CircleProgressBar(
-              foregroundColor: Colors.green,
-              value: 1.5
-          ),
           Container(
               height: MediaQuery.of(context).size.height*0.20,
               child: Center(
@@ -231,6 +230,16 @@ class _StartScreenState extends State<StartScreen> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
+                        ElevatedButton(
+                            style: AppColors.buttonStyle,
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => Scanning(cameras)),
+                              );
+                            },
+                            child: Text("Scanning")
+                        ),
                         ElevatedButton(
                             style: AppColors.buttonStyle,
                             onPressed: () {
