@@ -307,41 +307,109 @@ class _ScanningState extends State<Scanning> {
 
   void showFoodInfo(String l, BuildContext context) {
     FoodData fD = getCorrespondingFoodInfo(l);
+    TextStyle tS = TextStyle(
+      fontSize: 20,
+      color: Colors.white,
+      fontWeight: FontWeight.bold
+    );
 
-    showDialog(
+    showModalBottomSheet(
         context: context,
         builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text(fD.name),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
+          return Container(
+            color: Colors.grey[700],
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height*0.6,
+            child: Column(
               children: [
-                Text("Calories: " + fD.calories.toString() + "C"),
-                Text("Protein: " + fD.protein.toString() + "g"),
-                Text("Fats: "+ fD.fats.toString() + "g"),
-                Text("Sodium: "+ fD.sodium.toString() + "mg"),
-                Text("Carbs: "+ fD.carbs.toString() + "g"),
-                Text("Sugar: "+ fD.sugar.toString() + "g"),
+                Padding(
+                  padding: const EdgeInsets.only( top:20, bottom: 10 ),
+                  child: Text(
+                      fD.name,
+                      style: TextStyle(
+                        fontSize: 35,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white
+                      ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only( top:6 ),
+                  child: Text(
+                      "Calories: " + fD.calories.toString() + "C",
+                      style: tS,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only( top:6 ),
+                  child: Text(
+                      "Protein: " + fD.protein.toString() + "g",
+                      style: tS,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only( top:6 ),
+                  child: Text(
+                      "Fats: "+ fD.fats.toString() + "g",
+                    style: tS,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only( top:6 ),
+                  child: Text(
+                      "Sodium: "+ fD.sodium.toString() + "mg",
+                    style: tS,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only( top:6 ),
+                  child: Text(
+                      "Carbs: "+ fD.carbs.toString() + "g",
+                    style: tS,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only( top:6 ),
+                  child: Text(
+                      "Sugar: "+ fD.sugar.toString() + "g",
+                    style: tS,
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ElevatedButton(
+                          onPressed: (){
+                            Navigator.of(context).pop();
+                          },
+                          child: Text(
+                              "back",
+                              style: tS,
+                          )
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          List<String> goals = await saveToFoodHistory(fD.name);
+                          if (goals.isNotEmpty)
+                            await saveWarnings(goals);
+                          Navigator.of(context).pop();
+                          showLimitReached(goals, context);
+                        },
+                        child: Text(
+                          "add",
+                          style: tS,
+                        ),
+                      ),
+                    )
+                  ],
+                ),
               ],
             ),
-            actions: <Widget> [
-              ElevatedButton(
-                  onPressed: (){
-                    Navigator.of(context).pop();
-                  },
-                  child: Text("back")
-              ),
-              ElevatedButton(
-                  onPressed: () async {
-                    List<String> goals = await saveToFoodHistory(fD.name);
-                    if (goals.isNotEmpty)
-                      await saveWarnings(goals);
-                      Navigator.of(context).pop();
-                      showLimitReached(goals, context);
-                    },
-                  child: Text("add"),
-              )
-            ]
           );
         }
     );
@@ -355,23 +423,76 @@ class _ScanningState extends State<Scanning> {
         alignment: AlignmentDirectional.bottomCenter,
         children: [
           Camera(widget.cameras, setRecognitions),
-          ListView.builder(
+
+          (output.length == 0)?
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                     color: Colors.white,
+                      borderRadius: BorderRadius.all(Radius.circular(50))
+                  ),
+                  child: Text(
+                    "Scanning for items...",
+                    style: TextStyle(
+                      fontSize: 25,
+                      color: Colors.black
+                    ),
+                  ),
+                ),
+              )
+          :ListView.builder(
             shrinkWrap: true,
             padding: const EdgeInsets.all(8),
             itemCount: output.length,
             itemBuilder: (BuildContext context, int index) {
-               return Container(
-                 height: 50,
-                 color: Colors.amber,
-                 child: Row(
-                   children: [
-                     Text(output[index]["label"]),
-                     IconButton(
-                         onPressed: () {
-                           showFoodInfo(output[index]["label"], context);
-                         },
-                         icon: Icon(Icons.remove_red_eye))
-                   ],
+               //turn the label "0 Banana" into "Banana"
+               RegExp re = RegExp(r'[a-zA-Z]*$');
+               String label = output[index]["label"].toString();
+               Match m = re.firstMatch(label);
+               String displayString = label.substring(m.start, m.end);
+
+
+               return Padding(
+                 padding: const EdgeInsets.only(
+                   left: 40,
+                   top: 10,
+                   right: 40,
+                   bottom: 20,
+                 ),
+                 child: Container(
+                   decoration: BoxDecoration(
+                     color: Colors.grey[700].withOpacity(0.7),
+                     borderRadius: BorderRadius.all(Radius.circular(50))
+                   ),
+                   height: 50,
+                   width: 200,
+                   child: Padding(
+                     padding: const EdgeInsets.all(8.0),
+                     child: Row(
+                       mainAxisAlignment: MainAxisAlignment.center,
+                       crossAxisAlignment: CrossAxisAlignment.center,
+                       children: [
+                         Text(
+                           displayString,
+                           style: TextStyle(
+                             fontSize: 20,
+                             fontWeight: FontWeight.bold,
+                             color: Colors.white
+                           ),
+                         ),
+                         IconButton(
+                             onPressed: () {
+                               showFoodInfo(output[index]["label"], context);
+                             },
+                             icon: Icon(
+                                 Icons.add,
+                                 color: Colors.white,
+                             )
+                         )
+                       ],
+                     ),
+                   ),
                  ),
                );
             }

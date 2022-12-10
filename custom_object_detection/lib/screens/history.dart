@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:tflite_test/food_dictionary.dart';
+import 'package:tflite_test/main.dart';
 import 'package:tflite_test/screens/start.dart';
 class History extends StatefulWidget {
   const History({Key key}) : super(key: key);
@@ -106,6 +107,18 @@ class _HistoryState extends State<History> {
           setState(() {
             if (warning.contains("calories"))
               exceedCalories = true;
+            if (warning.contains("carbs"))
+              exceedCarbs = true;
+            if (warning.contains("sugar"))
+              exceedSugar = true;
+            if (warning.contains("protein"))
+              exceedProtein = true;
+            if (warning.contains("fats"))
+              exceedFats = true;
+            if (warning.contains("sodium"))
+              exceedSodium = true;
+
+
           });
         });
       }
@@ -150,7 +163,8 @@ class _HistoryState extends State<History> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text('TableCalendar - Basics'),
+          title: Text('History'),
+          backgroundColor: Colors.green,
           automaticallyImplyLeading: false,
         ),
         body: Column(
@@ -328,12 +342,13 @@ class _HistoryState extends State<History> {
     end: Alignment.topCenter,
   );
 
+  int barHeight = 19;
   List<BarChartGroupData> get barGroups => [
     BarChartGroupData(
       x: 0,
       barRods: [
         BarChartRodData(
-          toY: min(calories/calorieLimit * 21, 21),
+          toY: min(calories/calorieLimit * barHeight, barHeight.toDouble()),
           gradient: exceedCalories? _exceedGradient: _barsGradient,
         )
       ],
@@ -343,8 +358,8 @@ class _HistoryState extends State<History> {
       x: 1,
       barRods: [
         BarChartRodData(
-          toY: min(carbs/carbsLimit * 21, 21),
-          gradient: _barsGradient,
+          toY: min(carbs/carbsLimit * barHeight, barHeight.toDouble()),
+          gradient: exceedCarbs? _exceedGradient: _barsGradient,
         )
       ],
       showingTooltipIndicators: [0],
@@ -353,8 +368,8 @@ class _HistoryState extends State<History> {
       x: 2,
       barRods: [
         BarChartRodData(
-          toY: min(sugar/sugarLimit * 21, 21),
-          gradient: _barsGradient,
+          toY: min(sugar/sugarLimit * barHeight, barHeight.toDouble()),
+          gradient: exceedSugar? _exceedGradient: _barsGradient,
         )
       ],
       showingTooltipIndicators: [0],
@@ -363,8 +378,8 @@ class _HistoryState extends State<History> {
       x: 3,
       barRods: [
         BarChartRodData(
-          toY: min(protein/proteinLimit * 21, 21),
-          gradient: _barsGradient,
+          toY: min(protein/proteinLimit * barHeight, barHeight.toDouble()),
+          gradient: exceedProtein? _exceedGradient: _barsGradient,
         )
       ],
       showingTooltipIndicators: [0],
@@ -373,8 +388,8 @@ class _HistoryState extends State<History> {
       x: 4,
       barRods: [
         BarChartRodData(
-          toY: min(fats/fatLimit * 21, 21),
-          gradient: _barsGradient,
+          toY: min(fats/fatLimit * barHeight, barHeight.toDouble()),
+          gradient: exceedFats? _exceedGradient: _barsGradient,
         )
       ],
       showingTooltipIndicators: [0],
@@ -383,8 +398,8 @@ class _HistoryState extends State<History> {
       x: 5,
       barRods: [
         BarChartRodData(
-          toY: min(sodium/sodiumLimit * 21, 21),
-          gradient: _barsGradient,
+          toY: min(sodium/sodiumLimit * barHeight, barHeight.toDouble()),
+          gradient: exceedSodium? _exceedGradient: _barsGradient,
         )
       ],
       showingTooltipIndicators: [0],

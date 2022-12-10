@@ -36,6 +36,7 @@ dependencies:
   table_calendar:
   step_progress_indicator:
   circle_progress_bar:
+  fl_chart:
 
 
 dev_dependencies:
