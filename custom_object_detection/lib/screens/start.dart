@@ -200,16 +200,21 @@ class _StartScreenState extends State<StartScreen> {
       body: Column(
         children: [
           Container(
-              height: MediaQuery.of(context).size.height*0.20,
-              child: Center(
-                child: Text(
-                    "APP NAME",
-                    style: TextStyle(
-                      color: AppColors.textColor,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 30
+              height: MediaQuery.of(context).size.height*0.15,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Center(
+                    child: Text(
+                        "APP NAME",
+                        style: TextStyle(
+                          color: AppColors.textColor,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 60,
+                        ),
                     ),
-                ),
+                  ),
+                ],
               )
           ),
           Center(
@@ -226,7 +231,7 @@ class _StartScreenState extends State<StartScreen> {
                   ),
                 ),
                   Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.only(top: 20, bottom: 10, left: 0,right: 0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -273,10 +278,10 @@ class _StartScreenState extends State<StartScreen> {
               crossAxisCount: 3,
               children: <Widget>[
                 createInfoWidget(Icons.cake, "Sugar", 36),
-                createInfoWidget(Icons.add, "Sodium", 2300),
+                createInfoWidget(Icons.local_pizza, "Sodium", 2300),
                 createInfoWidget(Icons.set_meal, "Protein", 60),
                 createInfoWidget(Icons.dangerous, "Fats", 97),
-                createInfoWidget(Icons.add, "Carbs", 275),
+                createInfoWidget(Icons.food_bank, "Carbs", 275),
                 createInfoWidget(Icons.fastfood_sharp, "Calories", 2000),
               ],
             ),

@@ -26,23 +26,23 @@ Future<void> main() async {
   await prefs.clear();
   cameras = await availableCameras();
 
-  await prefs.setDouble("calorieIntake", 1).then((value) {print("Saved intake for calories");});
-  await prefs.setDouble("calorieLimit", 1).then((value) {print("Saved limit for calories");});
+  await prefs.setDouble("calorieIntake", 0).then((value) {print("Saved intake for calories");});
+  await prefs.setDouble("calorieLimit", 2000).then((value) {print("Saved limit for calories");});
 
-  await prefs.setDouble("proteinIntake", 1).then((value) {print("Saved intake for protein");});
-  await prefs.setDouble("proteinLimit", 2).then((value) {print("Saved limit for protein");});
+  await prefs.setDouble("proteinIntake", 0).then((value) {print("Saved intake for protein");});
+  await prefs.setDouble("proteinLimit", 60).then((value) {print("Saved limit for protein");});
 
-  await prefs.setDouble("sodiumIntake", 2).then((value) {print("Saved intake for sodium");});
-  await prefs.setDouble("sodiumLimit", 3).then((value) {print("Saved limit for sodium");});
+  await prefs.setDouble("sodiumIntake", 0).then((value) {print("Saved intake for sodium");});
+  await prefs.setDouble("sodiumLimit", 2300).then((value) {print("Saved limit for sodium");});
 
-  await prefs.setDouble("carbsIntake", 3).then((value) {print("Saved intake for carbs");});
-  await prefs.setDouble("carbsLimit", 4).then((value) {print("Saved limit for carbs");});
+  await prefs.setDouble("carbsIntake", 0).then((value) {print("Saved intake for carbs");});
+  await prefs.setDouble("carbsLimit", 275).then((value) {print("Saved limit for carbs");});
 
-  await prefs.setDouble("fatsIntake", 4).then((value) {print("Saved intake for fats");});
-  await prefs.setDouble("fatsLimit", 5).then((value) {print("Saved limit for fats");});
+  await prefs.setDouble("fatsIntake", 0).then((value) {print("Saved intake for fats");});
+  await prefs.setDouble("fatsLimit", 97).then((value) {print("Saved limit for fats");});
 
-  await prefs.setDouble("sugarIntake", 4).then((value) {print("Saved intake for sugar");});
-  await prefs.setDouble("sugarLimit", 6).then((value) {print("Saved limit for sugar");});
+  await prefs.setDouble("sugarIntake", 0).then((value) {print("Saved intake for sugar");});
+  await prefs.setDouble("sugarLimit", 36).then((value) {print("Saved limit for sugar");});
 
   runApp(MaterialApp(
       debugShowCheckedModeBanner: false,
