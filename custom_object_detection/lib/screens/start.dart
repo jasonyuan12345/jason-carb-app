@@ -231,9 +231,9 @@ class _StartScreenState extends State<StartScreen> {
                   ),
                 ),
                   Padding(
-                    padding: const EdgeInsets.only(top: 20, bottom: 10, left: 0,right: 0),
+                    padding: const EdgeInsets.only(top: 20, bottom: 0, left: 0,right: 0),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         ElevatedButton(
                             style: AppColors.buttonStyle,
@@ -269,10 +269,10 @@ class _StartScreenState extends State<StartScreen> {
               ),
             ),
           Expanded(
-            flex: 40,
+            flex: 30,
             child: GridView.count(
               primary: false,
-              padding: const EdgeInsets.all(10),
+              padding: const EdgeInsets.all(20),
               crossAxisSpacing: 17,
               mainAxisSpacing: 17,
               crossAxisCount: 3,
@@ -289,7 +289,7 @@ class _StartScreenState extends State<StartScreen> {
           Expanded(
             flex: 40,
             child: ListView.builder(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(15),
                 itemCount: limits.length,
                 itemBuilder: (BuildContext context, int index) {
                   return progressBar(limits[index]);
