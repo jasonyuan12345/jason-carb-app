@@ -206,7 +206,7 @@ class _StartScreenState extends State<StartScreen> {
                 children: [
                   Center(
                     child: Text(
-                        "APP NAME",
+                        "FOODSYNC",
                         style: TextStyle(
                           color: AppColors.textColor,
                           fontWeight: FontWeight.bold,
