@@ -63,7 +63,7 @@ class _StartScreenState extends State<StartScreen> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-              title: Text("Set your limit"),
+              title: Text("set your limit"),
               content: StatefulBuilder(
                 builder: (BuildContext context, StateSetter setState) {
                   return Column(
@@ -73,27 +73,27 @@ class _StartScreenState extends State<StartScreen> {
                           value: selectedValue,
                           items: [
                             DropdownMenuItem(
-                              child: Text("Calorie"),
+                              child: Text("calorie"),
                               value: "calorie",
                             ),
                             DropdownMenuItem(
-                              child: Text("Carbs"),
+                              child: Text("carbs"),
                               value: "carbs",
                             ),
                             DropdownMenuItem(
-                              child: Text("Fats"),
+                              child: Text("fats"),
                               value: "fats",
                             ),
                             DropdownMenuItem(
-                              child: Text("Sodium"),
+                              child: Text("sodium"),
                               value: "sodium",
                             ),
                             DropdownMenuItem(
-                              child: Text("Sugar"),
+                              child: Text("sugar"),
                               value: "sugar",
                             ),
                             DropdownMenuItem(
-                              child: Text("Protein"),
+                              child: Text("protein"),
                               value: "protein",
                             ),
                           ],
@@ -206,11 +206,11 @@ class _StartScreenState extends State<StartScreen> {
                 children: [
                   Center(
                     child: Text(
-                        "FOODSYNC",
+                        "FOOD SYNC",
                         style: TextStyle(
                           color: AppColors.textColor,
                           fontWeight: FontWeight.bold,
-                          fontSize: 60,
+                          fontSize: 50,
                         ),
                     ),
                   ),
@@ -222,7 +222,7 @@ class _StartScreenState extends State<StartScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(10.0),
                   child: Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.all(Radius.circular(20)),
@@ -231,7 +231,7 @@ class _StartScreenState extends State<StartScreen> {
                   ),
                 ),
                   Padding(
-                    padding: const EdgeInsets.only(top: 20, bottom: 0, left: 0,right: 0),
+                    padding: const EdgeInsets.only(top: 10, bottom: 10, left: 0,right: 0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
@@ -243,7 +243,7 @@ class _StartScreenState extends State<StartScreen> {
                                 MaterialPageRoute(builder: (context) => Scanning(cameras)),
                               );
                             },
-                            child: Text("Scanning")
+                            child: Text("Scan")
                         ),
                         ElevatedButton(
                             style: AppColors.buttonStyle,
@@ -260,7 +260,7 @@ class _StartScreenState extends State<StartScreen> {
                             onPressed: () {
                               showLimitEditor(context);
                             },
-                            child: Text("Change Limits")
+                            child: Text("Limits")
                         ),
                       ],
                     ),
