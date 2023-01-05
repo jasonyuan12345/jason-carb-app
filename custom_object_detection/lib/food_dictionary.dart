@@ -33,6 +33,24 @@ Map<String, FoodData> foodDictionary = {
   "Cookies" :FoodData("Cookies", 142, 1.7, 149, 18, 7, 4.3),
   "Fried Rice" :FoodData("Fried Rice", 228, 7, 554, 43, 3.2, 0.6),
   "Pizza" :FoodData("Pizza", 285, 7, 640, 36, 10, 3.8),
-  "Waffles" :FoodData("Waffles", 82, 2.2, 145, 9, 4, 3.3),
+  "Ice Cream" :FoodData("Ice Cream", 207, 3.5, 80, 24, 11, 21),
+  "Tacos" :FoodData("Tacos", 226, 9, 397, 20, 13, 0.9),
+  "Macaroni and Cheese" :FoodData("Macaroni and Cheese", 164, 7, 460, 23, 5, 1.6),
+  "Oyster" :FoodData("Oyster", 198, 9, 417, 12, 13, 2),
+  "Pancakes" :FoodData("Pancakes", 227, 6, 439, 28, 10, 16),
+  "Pickles" :FoodData("Pickles", 10, 0.3, 1208, 2.3, 0.2, 1.1),
+  "Sausage" :FoodData("Sausage", 300, 12, 848, 2, 27, 0),
+  "Sodas" :FoodData("Sodas", 41, 0, 4, 11, 0, 11),
+  "Toast" :FoodData("Toast", 313, 13, 601, 56, 4.3, 6),
+  "Tofu" :FoodData("Tofu", 76, 8, 7, 1.9, 4.8, 0.5),
+  "Apple Pie" :FoodData("Apple Pie", 237, 1.9, 266, 34, 11, 17),
+  "Broccoli" :FoodData("Broccoli", 34, 2.8, 33, 7, 0.4, 1.7),
+  "Coconut" :FoodData("Coconut", 354, 3.3, 105, 15, 100, 6),
+  "Coffee" :FoodData("Waffles", 1, 0.1, 2, 0, 0, 0),
+  "Mushrooms" :FoodData("Mushrooms", 22, 3.1, 5, 3.3, 0.3, 2),
+  "Onions" :FoodData("Onions", 40, 1.1, 4, 9, 0.1, 4.2),
+
+
+
 
 };
