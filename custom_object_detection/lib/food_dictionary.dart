@@ -11,7 +11,7 @@ class FoodData {
 }
 
 Map<String, FoodData> foodDictionary = {
-  "Apple" : FoodData("Apple", 95, 0.5, 2, 25, 0.3, 19),
+  "Apple" : FoodData("Apple", 95, 0.5, 2, 25, 0.3, 19), 
   "Banana" : FoodData("Banana", 105, 1.3, 1, 27, 0.4,14),
   "Peach" : FoodData("Peach", 50, 1, 0, 15, 0.5, 13),
   "Watermelon" : FoodData("Watermelon", 85, 1.7, 3, 21, 0.4, 17),
