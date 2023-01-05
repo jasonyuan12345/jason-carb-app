@@ -105,20 +105,21 @@ class _HistoryState extends State<History> {
       if (warnings != null && warnings.isNotEmpty) {
         warnings.forEach((warning) {
           setState(() {
-            if (warning.contains("calories"))
-              exceedCalories = true;
-            if (warning.contains("carbs"))
-              exceedCarbs = true;
-            if (warning.contains("sugar"))
-              exceedSugar = true;
-            if (warning.contains("protein"))
-              exceedProtein = true;
-            if (warning.contains("fats"))
-              exceedFats = true;
-            if (warning.contains("sodium"))
-              exceedSodium = true;
-
-
+            if (warning.contains("exceeded"))
+            {
+              if (warning.contains("calories"))
+                exceedCalories = true;
+              if (warning.contains("carbs"))
+                exceedCarbs = true;
+              if (warning.contains("sugar"))
+                exceedSugar = true;
+              if (warning.contains("protein"))
+                exceedProtein = true;
+              if (warning.contains("fats"))
+                exceedFats = true;
+              if (warning.contains("sodium"))
+                exceedSodium = true;
+            }
           });
         });
       }
@@ -170,7 +171,7 @@ class _HistoryState extends State<History> {
         body: Column(
           children: [
             Expanded(
-              flex: 50,
+              flex: 60,
               child: TableCalendar(
                 firstDay: DateTime.utc(2022, 11, 1),
                 lastDay: DateTime.utc(2030, 12, 30),
