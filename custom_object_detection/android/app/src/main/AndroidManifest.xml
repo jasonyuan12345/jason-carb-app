@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.mohan.tflite_test">
    <application
-        android:label="tflite_test"
+        android:label="Food Sync"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

@@ -169,16 +169,33 @@ class _ScanningState extends State<Scanning> {
 
     if (calories > calorieLimit)
       warnings.add("You have exceeded your calories limit by " + (calories-calorieLimit).toString());
+    else
+      warnings.add("${calorieLimit - calories} calories left until you reach your limit!");
+
     if (protein > proteinLimit)
       warnings.add("You have exceeded your protein limit by " + (protein-proteinLimit).toString());
+    else
+      warnings.add("${proteinLimit - protein} grams left until you reach your limit!");
+
     if (sodium > sodiumLimit)
       warnings.add("You have exceeded your sodium limit by " + (sodium-sodiumLimit).toString());
+    else
+      warnings.add("${sodiumLimit - sodium} milligrams of sodium left until you reach your limit!");
+
     if (carbs > carbsLimit)
       warnings.add("You have exceeded your carbs limit by " + (carbs-carbsLimit).toString());
+    else
+      warnings.add("${carbsLimit - carbs} grams of carbs left until you reach your limit!");
+
     if (fats > fatsLimit)
       warnings.add("You have exceeded your fats limit by " + (fats-fatsLimit).toString());
+    else
+      warnings.add("${fatsLimit - fats} grams of fat left until you reach your limit!");
+
     if (sugar > sugarLimit)
       warnings.add("You have exceeded your sugar limit by " + (sugar-sugarLimit).toString());
+    else
+      warnings.add("${sugarLimit - sugar} grams of sugar left until you reach your limit!");
 
     return warnings;
   }

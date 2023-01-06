@@ -24,6 +24,16 @@ class _StartScreenState extends State<StartScreen> {
   var limits = [];
   var selectedValue;
 
+  var sex;
+  var weight_lb;
+  var height_in;
+  var age;
+  var energy_expenditure;
+
+  TextEditingController weightController = TextEditingController();
+  TextEditingController heightController = TextEditingController();
+  TextEditingController ageController = TextEditingController();
+
   _StartScreenState()
   {
     print("Visited start screen");
@@ -45,7 +55,7 @@ class _StartScreenState extends State<StartScreen> {
         at = 40;
 
       setState(() {
-        limits.add(new DataLimit(limit, at, q));
+        limits.add(new DataLimit(limit.roundToDouble(), at.roundToDouble(), q));
       });
     }
   }
@@ -131,6 +141,164 @@ class _StartScreenState extends State<StartScreen> {
     );
   }
 
+  double getBMR() {
+    if (sex.compareTo("male") == 0) {
+      return 66.47 + (6.24 * weight_lb) + (12.7 * height_in) - (6.755 * age);
+    }
+    else {
+      return 655.1 + (4.35 * weight_lb) + (4.7 * height_in) - (4.7 * age);
+    }
+  }
+
+  double getTEE() {
+    switch(energy_expenditure) {
+      case 1:
+        return 1.2;
+      case 2:
+        return 1.375;
+      case 3:
+        return 1.55;
+      case 4:
+        return 1.725;
+      case 5:
+        return 1.9;
+      default:
+        return 1.55;
+    }
+  }
+
+  double calcDailyCalories() {
+    return getBMR() * getTEE();
+  }
+
+  void showCalculator(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return SingleChildScrollView(
+            child: AlertDialog(
+                title: Text("Calculate your limits"),
+                content: StatefulBuilder(
+                    builder: (BuildContext context, StateSetter setState) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text("Sex:"),
+                          DropdownButton(
+                              value: sex,
+                              items: [
+                                DropdownMenuItem(
+                                  child: Text("Male"),
+                                  value: "male",
+                                ),
+                                DropdownMenuItem(
+                                  child: Text("Female"),
+                                  value: "female",
+                                ),
+                              ],
+                              onChanged: (value) {
+                                setState(() {
+                                  sex = value;
+                                });
+                              }
+                          ),
+                          Text("Activity Level:"),
+                          DropdownButton(
+                              value: energy_expenditure,
+                              items: [
+                                DropdownMenuItem(
+                                  child: Text("None"),
+                                  value: 1,
+                                ),
+                                DropdownMenuItem(
+                                  child: Text("Light"),
+                                  value: 2,
+                                ),
+                                DropdownMenuItem(
+                                  child: Text("Moderate"),
+                                  value: 3,
+                                ),
+                                DropdownMenuItem(
+                                  child: Text("Heavy"),
+                                  value: 4,
+                                ),
+                                DropdownMenuItem(
+                                  child: Text("Very Heavy"),
+                                  value: 5,
+                                ),
+                              ],
+                              onChanged: (value) {
+                                setState(() {
+                                  energy_expenditure = value;
+                                });
+                              }
+                          ),
+                          Text("Weight in pounds:"),
+                          TextField(
+                            keyboardType: TextInputType.number,
+                            controller: weightController,
+                          ),
+                          Text("Height in inches:"),
+                          TextField(
+                            keyboardType: TextInputType.number,
+                            controller: heightController,
+                          ),
+                          Text("Age:"),
+                          TextField(
+                            keyboardType: TextInputType.number,
+                            controller: ageController,
+                          ),
+                        ],
+                      );
+                    }
+                ),
+                actions: <Widget> [
+                  ElevatedButton(
+                      onPressed: (){
+                        Navigator.of(context).pop();
+                      },
+                      child: Text("back")
+                  ),
+                  ElevatedButton(
+                      onPressed: () async {
+                        setState(() {
+                          weight_lb = int.parse(weightController.text);
+                          height_in = int.parse(heightController.text);
+                          age = int.parse(ageController.text);
+                        });
+
+                        double calcCalories = calcDailyCalories().roundToDouble();
+                        double ratio = calcCalories / 2000;
+
+                        double calcProtein = (50 * ratio).roundToDouble();
+                        double calcSodium = (2300 * ratio).roundToDouble();
+                        double calcCarbs = (275 * ratio).roundToDouble();
+                        double calcFats = (78 * ratio).roundToDouble();
+                        double calcSugar = (50 * ratio).roundToDouble();
+
+                        await setLimit("calorie", calcCalories);
+                        await setLimit("protein", calcProtein);
+                        await setLimit("carbs", calcCarbs);
+                        await setLimit("sodium", calcSodium);
+                        await setLimit("fats", calcFats);
+                        await setLimit("sugar", calcSugar);
+
+                        setState(() {
+                          //reload page
+                        });
+
+                        Navigator.of(context).pop();
+                      },
+                      child: Icon(Icons.check)
+                  )
+                ]
+            ),
+          );
+        }
+    );
+  }
+
   Container createInfoWidget(IconData i, String name, int amount) {
     return Container(
       decoration: BoxDecoration(
@@ -195,6 +363,8 @@ class _StartScreenState extends State<StartScreen> {
 
   @override
   Widget build(BuildContext context) {
+    getLimits(LIMITS.keys.toList());
+
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
       body: Column(
@@ -261,6 +431,13 @@ class _StartScreenState extends State<StartScreen> {
                               showLimitEditor(context);
                             },
                             child: Text("Limits")
+                        ),
+                        ElevatedButton(
+                            style: AppColors.buttonStyle,
+                            onPressed: () {
+                              showCalculator(context);
+                            },
+                            child: Text("Calculate")
                         ),
                       ],
                     ),
