@@ -34,7 +34,7 @@ Map<String, FoodData> foodDictionary = {
   "Fried Rice" :FoodData("Fried Rice", 228, 7, 554, 43, 3.2, 0.6),
   "Pizza" :FoodData("Pizza", 285, 7, 640, 36, 10, 3.8),
   "Ice Cream" :FoodData("Ice Cream", 207, 3.5, 80, 24, 11, 21),
-  "Tacos" :FoodData("Tacos", 226, 9, 397, 20, 13, 0.9),
+  "Tacos" :FoodData("Tacos", 226, 9, 397, 20, 13, 0.9), 
   "Macaroni and Cheese" :FoodData("Macaroni and Cheese", 164, 7, 460, 23, 5, 1.6),
   "Oyster" :FoodData("Oyster", 198, 9, 417, 12, 13, 2),
   "Pancakes" :FoodData("Pancakes", 227, 6, 439, 28, 10, 16),
