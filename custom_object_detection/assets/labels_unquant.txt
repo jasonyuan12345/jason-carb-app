@@ -1,10 +1,40 @@
 0 Banana
-1 Watermelon
-2 Peach
-3 Tomato
-4 Pineapple
-5 Rice
-6 Fries
-7 Hamburger
-8 Egg
-9 Noodle
+1 Orange
+2 Kiwi
+3 Dragonfruit
+4 Mango
+5 Apple
+6 Cookies
+7 Chocolate
+8 Cucumber
+9 Donuts
+10 Baked Beans
+11 Popcorn
+12 Potato Chips
+13 Avocado
+14 Bacon
+15 Barbecue Ribs
+16 Buffalo Wings
+17 Fried Rice
+18 Pork
+19 Salad
+20 Sushi
+21 Pho
+22 Pizza
+23 Ice Cream
+24 Waffles
+25 Tacos
+26 Macaroni and Cheese
+27 Oyster
+28 Pancakes
+29 Pickles
+30 Sausage
+31 Sodas
+32 Toast
+33 Tofu
+34 Apple Pie
+35 Broccoli
+36 Coconut
+37 Coffee
+38 Mushrooms
+39 Onions

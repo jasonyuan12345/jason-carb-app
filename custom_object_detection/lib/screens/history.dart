@@ -166,7 +166,7 @@ class _HistoryState extends State<History> {
         appBar: AppBar(
           title: Text('History'),
           backgroundColor: Colors.green,
-          automaticallyImplyLeading: false,
+          automaticallyImplyLeading: true,
         ),
         body: Column(
           children: [

@@ -17,6 +17,7 @@ class Scanning extends StatefulWidget {
 
 class _ScanningState extends State<Scanning> {
   List<dynamic> output = [];
+  bool showWarning = false;
 
   @override
   void initState() {
@@ -37,6 +38,22 @@ class _ScanningState extends State<Scanning> {
     if (mounted) {
       setState(() {
         output = outputs;
+
+        for(int i = 0; i<outputs.length; i++) {
+          print(outputs[i]["label"]);
+          FoodData fD = getCorrespondingFoodInfo(outputs[i]["label"]);
+
+          if (fD.calories > 450 ||
+              fD.sugar > 30 ||
+              fD.carbs > 48 ||
+              fD.sodium > 200 ||
+              fD.fats > 35) {
+            showWarning = true;
+            break;
+          } else {
+            showWarning = false;
+          }
+        }
       });
     }
   }
@@ -45,50 +62,84 @@ class _ScanningState extends State<Scanning> {
     switch(l) {
       case "0 Banana":
         return foodDictionary["Banana"];
-      case "1 Watermelon":
-        return foodDictionary["Watermelon"];
-      case "2 Peach":
-        return foodDictionary["Peach"];
-      case "3 Tomato":
-        return foodDictionary["Tomato"];
-      case "4 Pineapple":
-        return foodDictionary["Pineapple"];
-      case "5 Rice":
-        return foodDictionary["Rice"];
-      case "6 Fries":
-        return foodDictionary["Fries"];
-      case "7 Hamburger":
-        return foodDictionary["Hamburger"];
-      case "8 Egg":
-        return foodDictionary["Egg"];
-      case "9 Noodle":
-        return foodDictionary["Noodle"];
-      case "10 Avocado":
-        return foodDictionary["10 Avocado"];
-      case "11 Bacon":
-        return foodDictionary["11 Bacon"];
-      case "12 Lamb":
-        return foodDictionary["12 Lamb"];
-      case "13 Steak":
-        return foodDictionary["13 Steak"];
-      case "14 Pork":
-        return foodDictionary["14 Pork"];
-      case "15 Cucumber":
-        return foodDictionary["15 Cucumber"];
-      case "16 Fried Chicken":
-        return foodDictionary["16 Fried Chicken"];
-      case "17 Hot Dog":
-        return foodDictionary["17 Hot Dog"];
-      case "18 Cookies":
-        return foodDictionary["18 Cookies"];
-      case "19 Fried Rice":
-        return foodDictionary["19 Fried Rice"];
-      case "20 Pizza":
-        return foodDictionary["20 Pizza"];
-      case "21 Waffles":
-        return foodDictionary["21 Waffles"];
-
-
+      case "1 Orange":
+        return foodDictionary["Orange"];
+      case "2 Kiwi":
+        return foodDictionary["Kiwi"];
+      case "3 Dragonfruit":
+        return foodDictionary["Dragonfruit"];
+      case "4 Mango":
+        return foodDictionary["Mango"];
+      case "5 Apple":
+        return foodDictionary["Apple"];
+      case "6 Cookies":
+        return foodDictionary["Cookies"];
+      case "7 Chocolate":
+        return foodDictionary["Chocolate"];
+      case "8 Cucumber":
+        return foodDictionary["Cucumber"];
+      case "9 Donuts":
+        return foodDictionary["Donuts"];
+      case "10 Baked Beans":
+        return foodDictionary["Baked Beans"];
+      case "11 Popcorn":
+        return foodDictionary["Popcorn"];
+      case "12 Potato Chips":
+        return foodDictionary["Potato Chips"];
+      case "13 Avocado":
+        return foodDictionary["Avocado"];
+      case "14 Bacon":
+        return foodDictionary["Bacon"];
+      case "15 Barbecue Ribs":
+        return foodDictionary["Barbecue Ribs"];
+      case "16 Buffalo Wings":
+        return foodDictionary["Buffalo Wings"];
+      case "17 Fried Rice":
+        return foodDictionary["Fried Rice"];
+      case "18 Pork":
+        return foodDictionary["Pork"];
+      case "19 Salad":
+        return foodDictionary["Salad"];
+      case "20 Sushi":
+        return foodDictionary["Sushi"];
+      case "21 Pho":
+        return foodDictionary["Pho"];
+      case "22 Pizza":
+        return foodDictionary["Pizza"];
+      case "23 Ice Cream":
+        return foodDictionary["Ice Cream"];
+      case "24 Waffles":
+        return foodDictionary["Waffles"];
+      case "25 Tacos":
+        return foodDictionary["Tacos"];
+      case "26 Macaroni and Cheese":
+        return foodDictionary["Macaroni and Cheese"];
+      case "27 Oyster":
+        return foodDictionary["Oyster"];
+      case "28 Pancakes":
+        return foodDictionary["Pancakes"];
+      case "29 Pickles":
+        return foodDictionary["Pickles"];
+      case "30 Sausage":
+        return foodDictionary["Sausage"];
+      case "31 Sodas":
+        return foodDictionary["Sodas"];
+      case "32 Toast":
+        return foodDictionary["Toast"];
+      case "33 Tofu":
+        return foodDictionary["Tofu"];
+      case "34 Apple Pie":
+        return foodDictionary["Apple Pie"];
+      case "35 Broccoli":
+        return foodDictionary["Broccoli"];
+      case "36 Coconut":
+        return foodDictionary["Coconut"];
+      case "37 Coffee":
+        return foodDictionary["Coffee"];
+      case "38 Mushrooms":
+        return foodDictionary["Mushrooms"];
+      case "39 Onions":
+        return foodDictionary["Onions"];
     }
   }
 
@@ -444,6 +495,11 @@ class _ScanningState extends State<Scanning> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.blueGrey,
+      appBar: AppBar(
+        title: Text("Scanning"),
+        automaticallyImplyLeading: true,
+        backgroundColor: Colors.green,
+      ),
       body: Stack(
         alignment: AlignmentDirectional.bottomCenter,
         children: [
@@ -521,7 +577,28 @@ class _ScanningState extends State<Scanning> {
                  ),
                );
             }
-          )
+          ),
+          showWarning?
+            Center(
+                child: Opacity(
+                    opacity: 0.5,
+                    child: Container(
+                        width: MediaQuery.of(context).size.width/2,
+                        height: MediaQuery.of(context).size.width/2,
+                        child: Image.network("https://www.pngkit.com/png/full/76-760200_big-red-x-red-x-mark-transparent-background.png")
+                    )
+                )
+            ) :
+            Center(
+              child: Opacity(
+                opacity: 0.5,
+                child: Container(
+                    width: MediaQuery.of(context).size.width/2,
+                    height: MediaQuery.of(context).size.width/2,
+                    child: Image.network("https://www.vippng.com/png/full/2-21068_tick-green-modern-green-correct-symbol-transparent-background.png")
+                ),
+              ),
+            )  
         ],
       ),
     );
